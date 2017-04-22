@@ -3,5 +3,6 @@ TODO
 x Make a world, whose circumference is specified as a number of fixed-size blocks
 x Camera with settable position
 - Make a little guy who can run around it
+- Fix weird image-drawing logic? Maybe restore coordinate system to Javascript native :(
 - Make blocks, warp them to fit world(?)
 - Rotate camera around to follow little guy

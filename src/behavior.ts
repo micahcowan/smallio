@@ -19,7 +19,14 @@ export let WorldGravity : ion.IBehaviorFactory
 
 class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {
-
+        let w = sprite.World.theWorld; // XXX
+        let sp = this.sprite as sprite.Player;
+        
+        // Ensure that falling stops at the planet surface.
+        if (sp.touchingWorld !== undefined && sp.touchingWorld(w)) {
+            // XXX will halt lateral motion too. Also, should make a little bounce.
+            sp.vel = new ion.Velocity(0, 0);
+        }
     }
 }
 

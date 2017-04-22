@@ -36,4 +36,8 @@ export class Player extends ion.Sprite implements ion.ISprite {
       , sm.WorldCollide
       , ion.b.Momentum
     ];
+
+    touchingWorld(w : World) : boolean {
+        return this.pos.distFrom(w.pos) < w.r + 28;
+    }
 }
