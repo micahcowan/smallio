@@ -37,20 +37,22 @@ export class Player extends ion.Sprite implements ion.ISprite {
     behaviors : ion.IBehaviorFactory[] = [
         sm.WorldGravity
       , sm.WorldCollide
-      , ion.b.Momentum
+      , ion.b.HandleKeys([
+          {
+              handler: sm.playerLeft,
+              keys: ['A', 'Left']
+          }
+        , {
+              handler: sm.playerRight,
+              keys: ['D', 'Right']
+          }
+        ])
       , ion.b.OnKey({
-            keyDown: ["Space", 'UpArrow', 'W']
+            keyDown: ["Space", 'Up', 'W']
           , fire: sm.playerJump
         })
-      , ion.b.OnKey({
-            keyDown: ['A', 'LeftArrow']
-          , fire: sm.playerLeft
-        })
-      , ion.b.OnKey({
-            keyDown: ['D', 'RightArrow']
-          , fire: sm.playerRight
-        })
       , sm.PlayerLateralFriction
+      , ion.b.Momentum
       , sm.PlayerRotator
     ];
 

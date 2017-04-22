@@ -9,7 +9,7 @@ class WorldGravityClass extends ion.b.BehaviorFac implements ion.IUpdatable {
         
         // XXX this indicates a major clunk in ionsible
         let dm = w.pos.diff(sp.pos).asDirMag();
-        dm.mag = 200; // set the accel amount
+        dm.mag = D.gravity; // set the accel amount
         let accel = new ion.Acceleration(dm);
         sp.vel = sp.vel.advanced(accel, delta);
     }
@@ -56,11 +56,13 @@ export let playerJump = (s : any) => {
     // Find out which direction is from the world, toward player.
     let dm = sp.pos.diff(w.pos).asDirMag();
     // Jump that direction
-    dm.mag = 150;
+    dm.mag = D.jumpSpeed;
     sp.vel = sp.vel.combined(new ion.Velocity(dm));
 };
 
-let playerMover = (inDir : number) => ((s : any) => {
+let playerMover : (inDir : number) => ion.b.KeyHandlerCallback
+    = (inDir) => ((game, s, delta) => {
+
     let sp = s as sprite.Player;
     let w = sprite.World.theWorld;
 
@@ -68,13 +70,13 @@ let playerMover = (inDir : number) => ((s : any) => {
     let dm = sp.pos.diff(w.pos).asDirMag();
     // Accelerate to the side of that.
     dm.dir = dm.dir + inDir;
-    dm.mag = 50;
-    sp.vel = sp.vel.combined(new ion.Velocity(dm));
+    dm.mag = D.lateralAccel;
+    sp.vel = sp.vel.advanced(new ion.Acceleration(dm), delta)
 });
 
-export let playerLeft = playerMover(D.TAU/4);
+export let playerLeft : ion.b.KeyHandlerCallback = playerMover(D.TAU/4);
 
-export let playerRight = playerMover(-D.TAU/4);
+export let playerRight : ion.b.KeyHandlerCallback = playerMover(-D.TAU/4);
 
 class PlayerLateralFrictionClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {
@@ -84,14 +86,29 @@ class PlayerLateralFrictionClass extends ion.b.BehaviorFac implements ion.IUpdat
 
         // Find out which direction is from the world, toward player.
         let dm = sp.pos.diff(w.pos).asDirMag();
-        // Use a degree perpendicular to taht.
+        // Use a degree perpendicular to that.
         let perp = dm.dir + D.TAU/4;
         // Measure that degree from current player velocity.
         let mag = sp.vel.magnitudeInDir(perp);
-        // Calculate a reduction to that direction
-        let redMag = mag * 0.05;
-        // Subtract it from velocity.
-        sp.vel = sp.vel.diff(new ion.Velocity({dir: perp, mag: redMag}))
+        // Reduce speed in that direction.
+        let redMag = D.lateralFriction;
+        if (redMag * delta.s > Math.abs(mag)) {
+            // We've exhausted the velocity in this direction. Consume all energy.
+            sp.vel = sp.vel.diff(new ion.Velocity({dir: perp, mag: mag}))
+        }
+        else {
+            if ((redMag > 0) == (mag > 0))
+                redMag = -redMag;
+            sp.vel = sp.vel.advanced(new ion.Acceleration({dir: perp, mag: redMag}), delta);
+        }
+
+        // Ensure the total lateral speed doesn't exceed maximum.
+        mag = sp.vel.magnitudeInDir(perp);
+        if (Math.abs(mag) > D.maxLateralVel) {
+            redMag = D.maxLateralVel - Math.abs(mag);
+            if (mag > 0) redMag = -redMag;
+            sp.vel = sp.vel.diff(new ion.Velocity({dir: perp, mag: redMag}));
+        }
     }
 }
 
