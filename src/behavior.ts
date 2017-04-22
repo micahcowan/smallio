@@ -39,6 +39,10 @@ class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
                 // Also ensure that the player can't go beneath the surface of the world.
                 sp.pos = sp.lastPos;
             }
+            
+            // Glitch repair: if velocity is really low, just set it to zero
+            if (sp.vel.x > -1 && sp.vel.x < 1 && sp.vel.y > -1 && sp.vel.y < 1)
+                sp.vel = new ion.Velocity(0, 0);
         }
     }
 }
