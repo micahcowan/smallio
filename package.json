@@ -1,0 +1,37 @@
+{
+  "name": "smallio",
+  "version": "1.0.0",
+  "description": "Super Smalio World: a well-rounded platformer game.",
+  "main": "build/smallio.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/micahcowan/smallio.git"
+  },
+  "keywords": [
+    "game",
+    "2d",
+    "HTML5",
+    "canvas",
+    "context2d",
+    "shooter",
+    "boomerang"
+  ],
+  "author": {
+    "name": "Micah J Cowan",
+    "email": "micah@addictivecode.org",
+    "url": "http://micah.cowan.name/"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/micahcowan/smallio/issues"
+  },
+  "homepage": "https://github.com/micahcowan/smallio#readme",
+  "devDependencies": {
+    "browserify": "^13.3.0",
+    "typescript": "^2.2.2",
+    "ionsible": "file:../ionsible"
+  }
+}
