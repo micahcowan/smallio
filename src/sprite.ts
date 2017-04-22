@@ -12,8 +12,10 @@ export class World extends ion.Sprite implements ion.ISprite {
     public readonly r : number;            // Radius size of this world
     public color : string = "olive";
     public static theWorld : World;
-    constructor(g : ion.Game, public readonly pos : ion.Point, public readonly szBlocks : number) {
+    constructor(g : ion.Game, pos : ion.Point, public readonly szBlocks : number) {
         super(g);
+
+        this.pos = pos;
 
         let circumf = szBlocks * D.blockSize;
         this.r = circumf / D.TAU;
@@ -26,15 +28,20 @@ export class World extends ion.Sprite implements ion.ISprite {
 }
 
 export class Player extends ion.Sprite implements ion.ISprite {
-    constructor(g : ion.Game, public readonly pos : ion.Point) {
+    constructor(g : ion.Game, pos : ion.Point) {
         super(g);
         this.drawer = new art.Player(this);
+        this.pos = pos;
     }
 
     behaviors : ion.IBehaviorFactory[] = [
         sm.WorldGravity
       , sm.WorldCollide
       , ion.b.Momentum
+      , ion.b.OnKey({
+            keyDown: "Space"
+          , fire: sm.playerJump
+        })
     ];
 
     touchingWorld(w : World) : boolean {

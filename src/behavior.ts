@@ -24,11 +24,39 @@ class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
         
         // Ensure that falling stops at the planet surface.
         if (sp.touchingWorld !== undefined && sp.touchingWorld(w)) {
-            // XXX will halt lateral motion too. Also, should make a little bounce.
-            sp.vel = new ion.Velocity(0, 0);
+            // Find the portion of the velocity that is heading into the world's center.
+            let dm = w.pos.diff(sp.pos).asDirMag();
+            let hitMag = sp.vel.magnitudeInDir(dm.dir);
+
+            // Don't mess with magnitudes going _away_ from the world!
+            if (hitMag > 0) {
+                // Scale it back, plus a little extra for bounce!
+                let extra = hitMag / 3;
+                if (extra < 25) extra = 0;
+                sp.vel = sp.vel.diff(new ion.Velocity({dir: dm.dir, mag: hitMag + extra}));
+
+                // Also ensure that the player can't go beneath the surface of the world.
+                sp.pos = sp.lastPos;
+            }
         }
     }
 }
 
 export let WorldCollide : ion.IBehaviorFactory
     = (game, sprite) => new WorldCollideClass(game, sprite);
+
+export let playerJump = (s : any) => {
+    let sp = s as sprite.Player;
+    let w = sprite.World.theWorld;
+
+    // Only jump if we're on the world surface.
+    if (!sp.touchingWorld(w)) return;
+
+    console.log("playerJump") // XXX
+
+    // Find out which direction is from the world, toward player.
+    let dm = sp.pos.diff(w.pos).asDirMag();
+    // Jump that direction
+    dm.mag = 150;
+    sp.vel = sp.vel.combined(new ion.Velocity(dm));
+};
