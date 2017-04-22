@@ -1,8 +1,16 @@
 {
     "compilerOptions": {
-        "target": "es5",
-        "strictNullChecks": true,
-        "noImplicitAny": true,
-        "sourceMap": true
+        "target": "es5"
+      , "strictNullChecks": true
+      , "noImplicitAny": true
+      , "sourceMap": true
+      , "declaration": true
+      , "outDir": "build/"
+      , "rootDir": "src/"
+      , "moduleResolution": "Node"
+      , "listEmittedFiles": true
     }
+  , "include": [
+        "src/**.ts"
+    ]
 }

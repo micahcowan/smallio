@@ -4,14 +4,14 @@ PATH := ./node_modules/.bin:$(PATH)
 
 SRC=src/*.ts
 TSC = ./node_modules/.bin/tsc
-TSCOPT = -d #-t ES5 --sourceMap --noImplicitAny --strictNullChecks
-BIFY = ./node_modules/.bin/browserify -d
+#TSCOPT = -d #-t ES5 --sourceMap --noImplicitAny --strictNullChecks
+BIFY = ./node_modules/.bin/browserify -d -p [ tsify ]
 
 all: browserify build/index.html #build/sounds
 
 build: build/smallio.js
 build/smallio.js: $(SRC)
-	$(TSC) $(TSCOPT) --rootDir src --outDir build $^
+	$(TSC)
 
 build/index.html:
 	ln -sf ../src/index.html $@
@@ -19,7 +19,7 @@ build/index.html:
 #	ln -sf ../sounds $@
 
 watch: $(SRC)
-	$(TSC) $(TSCOPT) -w --rootDir src --outDir build $^ || true
+	$(TSC) -w
 
 clean:
 	rm -fr build
@@ -28,7 +28,8 @@ distclean: clean
 	rm -fr node_modules
 
 browserify: build/smallio-all.js
-build/smallio-all.js: build/smallio.js
+build/smallio-all.js: src/smallio.ts #build/smallio.js
+	mkdir -p build
 	$(BIFY) -o $@ $<
 
 which:

@@ -31,7 +31,8 @@
   "homepage": "https://github.com/micahcowan/smallio#readme",
   "devDependencies": {
     "browserify": "^13.3.0",
-    "typescript": "^2.2.2",
-    "ionsible": "file:../ionsible"
+    "ionsible": "file:../ionsible",
+    "tsify": "^3.0.1",
+    "typescript": "^2.2.2"
   }
 }
