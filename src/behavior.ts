@@ -68,10 +68,54 @@ let playerMover = (inDir : number) => ((s : any) => {
     let dm = sp.pos.diff(w.pos).asDirMag();
     // Accelerate to the side of that.
     dm.dir = dm.dir + inDir;
-    dm.mag = 25;
+    dm.mag = 50;
     sp.vel = sp.vel.combined(new ion.Velocity(dm));
 });
 
 export let playerLeft = playerMover(D.TAU/4);
 
 export let playerRight = playerMover(-D.TAU/4);
+
+class PlayerLateralFrictionClass extends ion.b.BehaviorFac implements ion.IUpdatable {
+    update(delta : ion.Duration) {
+        let sp = this.sprite;
+        let w = sprite.World.theWorld;
+        // Reduce lateral motion
+
+        // Find out which direction is from the world, toward player.
+        let dm = sp.pos.diff(w.pos).asDirMag();
+        // Use a degree perpendicular to taht.
+        let perp = dm.dir + D.TAU/4;
+        // Measure that degree from current player velocity.
+        let mag = sp.vel.magnitudeInDir(perp);
+        // Calculate a reduction to that direction
+        let redMag = mag * 0.05;
+        // Subtract it from velocity.
+        sp.vel = sp.vel.diff(new ion.Velocity({dir: perp, mag: redMag}))
+    }
+}
+
+export let PlayerLateralFriction : ion.IBehaviorFactory
+    = (game, sprite) => new PlayerLateralFrictionClass(game, sprite);
+
+class PlayerRotatorClass extends ion.b.BehaviorFac implements ion.IUpdatable {
+    update(delta : ion.Duration) {
+        let sp = this.sprite;
+        let w = sprite.World.theWorld;
+        // Rotate the player so feet point at planet.
+
+        // For now, just rotate to match. Eventually we'll want to limit
+        // how much rotation can happen per frame.
+
+        // Find out which direction is from the world, toward player.
+        let dm = sp.pos.diff(w.pos).asDirMag();
+        // Translate into player rotation. When the direction to player
+        // is straight up (TAU/4), player should be at 0 rotation.
+        // So we subtract TAU/4 from the planet-to-player direction
+        // to obtain player rotation.
+        sp.rotation = dm.dir - D.TAU/4;
+    }
+}
+
+export let PlayerRotator : ion.IBehaviorFactory
+    = (game, sprite) => new PlayerRotatorClass(game, sprite);

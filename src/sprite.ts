@@ -50,6 +50,8 @@ export class Player extends ion.Sprite implements ion.ISprite {
             keyDown: ['D', 'RightArrow']
           , fire: sm.playerRight
         })
+      , sm.PlayerLateralFriction
+      , sm.PlayerRotator
     ];
 
     touchingWorld(w : World) : boolean {
