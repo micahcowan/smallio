@@ -1,6 +1,7 @@
 TODO
 
-- Make a world, whose circumference is specified as a number of fixed-size blocks
+x Make a world, whose circumference is specified as a number of fixed-size blocks
+x Camera with settable position
 - Make a little guy who can run around it
 - Make blocks, warp them to fit world(?)
 - Rotate camera around to follow little guy
