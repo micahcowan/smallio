@@ -1,5 +1,6 @@
 import * as ion from "ionsible";
 import * as sprite from "./sprite";
+import * as D from "./defs";
 
 class WorldGravityClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {
@@ -52,11 +53,25 @@ export let playerJump = (s : any) => {
     // Only jump if we're on the world surface.
     if (!sp.touchingWorld(w)) return;
 
-    console.log("playerJump") // XXX
-
     // Find out which direction is from the world, toward player.
     let dm = sp.pos.diff(w.pos).asDirMag();
     // Jump that direction
     dm.mag = 150;
     sp.vel = sp.vel.combined(new ion.Velocity(dm));
+};
+
+export let playerLeft = (s : any) => {
+    let sp = s as sprite.Player;
+    let w = sprite.World.theWorld;
+
+    // Find out which direction is from the world, toward player.
+    let dm = sp.pos.diff(w.pos).asDirMag();
+    // Accelerate to the side of that.
+    dm.dir = dm.dir + D.TAU/4;
+    dm.mag = 25;
+    sp.vel = sp.vel.combined(new ion.Velocity(dm));
+};
+
+export let playerRight = (s : any) => {
+
 };

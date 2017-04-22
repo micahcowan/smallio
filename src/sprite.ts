@@ -39,8 +39,16 @@ export class Player extends ion.Sprite implements ion.ISprite {
       , sm.WorldCollide
       , ion.b.Momentum
       , ion.b.OnKey({
-            keyDown: "Space"
+            keyDown: ["Space", 'UpArrow', 'W']
           , fire: sm.playerJump
+        })
+      , ion.b.OnKey({
+            keyDown: ['A', 'LeftArrow']
+          , fire: sm.playerLeft
+        })
+      , ion.b.OnKey({
+            keyDown: ['D', 'RightArrow']
+          , fire: sm.playerRight
         })
     ];
 
