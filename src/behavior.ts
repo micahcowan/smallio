@@ -60,18 +60,18 @@ export let playerJump = (s : any) => {
     sp.vel = sp.vel.combined(new ion.Velocity(dm));
 };
 
-export let playerLeft = (s : any) => {
+let playerMover = (inDir : number) => ((s : any) => {
     let sp = s as sprite.Player;
     let w = sprite.World.theWorld;
 
     // Find out which direction is from the world, toward player.
     let dm = sp.pos.diff(w.pos).asDirMag();
     // Accelerate to the side of that.
-    dm.dir = dm.dir + D.TAU/4;
+    dm.dir = dm.dir + inDir;
     dm.mag = 25;
     sp.vel = sp.vel.combined(new ion.Velocity(dm));
-};
+});
 
-export let playerRight = (s : any) => {
+export let playerLeft = playerMover(D.TAU/4);
 
-};
+export let playerRight = playerMover(-D.TAU/4);
