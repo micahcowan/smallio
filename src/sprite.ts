@@ -8,6 +8,29 @@ export class Background extends ion.Sprite implements ion.ISprite {
     drawer : ion.IDrawable = new art.Background();
 }
 
+export class Jumper {
+    public static rect : ion.Rect = {t: 5, b: -3, l: -10, r: 10};
+    public readonly vel : ion.Velocity;
+    constructor(public world : World, public readonly dir : number, public readonly height : number) {
+        // Calculate magnitude of velocity from height
+        this.vel = new ion.Velocity({dir: dir, mag: D.getSpeedFromDist(height)});
+    }
+
+    matchesDir(dir : number) : boolean {
+        let fudgeSz = ion.getXYWH(Jumper.rect).w / 2; // Size in pixels to fudge
+        // translate into directional fudge, using world radius
+        let w = this.world
+        /*
+        let circumf = w.r * D.TAU;
+        let fudge = (fudgeSz / circumf) * D.TAU;
+        */
+        let fudge = fudgeSz / w.r; // faster than above
+        dir = ion.util.clampRadians(dir);
+        let myDir = ion.util.clampRadians(this.dir);
+        return Math.abs(dir - myDir) < fudge;
+    }
+}
+
 export class World extends ion.Sprite implements ion.ISprite {
     public readonly r : number;            // Radius size of this world
     public color : string = "olive";
@@ -25,6 +48,28 @@ export class World extends ion.Sprite implements ion.ISprite {
     setColor(color : string) : this {
         this.color = color;
         return this;
+    }
+
+    public jumpers : Jumper[] = [];
+    addJumper(dir : number, height : number) : this {
+        this.jumpers.push(new Jumper(this, dir, height));
+        return this;
+    }
+
+    /**
+     * Find Jumper at Player position.
+     * Note: assumes we've already checked for whether
+     * we're at the surface, and just checks the direction.
+     */
+    findJumperAt(pos : ion.Point) : Jumper | null {
+        // Get direction to player
+        let dm = pos.diff(this.pos).asDirMag();
+        for (let i = 0; i < this.jumpers.length; ++i) {
+            let j = this.jumpers[i];
+            if (j.matchesDir(dm.dir))
+                return j;
+        }
+        return null;
     }
 }
 

@@ -2,6 +2,7 @@ import * as ion from "ionsible";
 
 import * as sprite from "./sprite";
 import { SmallioCamera } from "./camera";
+import * as D from "./defs";
 
 let game = new ion.Game({"parent": '#gameContainer'});
 
@@ -9,12 +10,14 @@ let worlds : ion.ISpriteContainer = {
     subsprites: [] // TS glitch? Can't declare worlds here directly, so push them later.
 }
 let w = worlds.subsprites;
-w.push(new sprite.World(game, ion.point(0, 0), 20));
-let world2 : sprite.World = new sprite.World(game, ion.point(680, 520), 58).setColor("BurlyWood");
-w.push(world2)
+let world = new sprite.World(game, ion.point(0, 0), 20);
+world.addJumper(2/12 * D.TAU, 150);
+w.push(world);
+world = new sprite.World(game, ion.point(680, 520), 58).setColor("BurlyWood");
+w.push(world)
 
-let player = new sprite.Player(game, ion.point(-100, 220), worlds);
-(window as any).mjcworld = world2;
+let player = new sprite.Player(game, ion.point(0, 240), worlds);
+
 game.setScene([
     new sprite.Background(game)
   , worlds

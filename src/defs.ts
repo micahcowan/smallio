@@ -34,7 +34,13 @@ let jump_time = 0.6;    // secs
    G = 8 * ymax/(jtm^2)
 */
 export let gravity = 8 * jump_height / (jump_time * jump_time);
-export let jumpSpeed = 4 * jump_height / jump_time;
+/**
+ * Calculate speed from desired jump distance.
+ */
+export function getSpeedFromDist(dist : number) {
+    return 4 * dist / jump_time;
+}
+export let jumpSpeed = getSpeedFromDist(jump_height);
 
 
 // Now to calculate lateral friction and movement force, given

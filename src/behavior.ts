@@ -58,27 +58,31 @@ class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
         
         // Ensure that falling stops at the planet surface.
         if (sp.touchingWorld !== undefined && sp.touchingWorld(w)) {
-            // Find the portion of the velocity that is heading into the world's center.
-            let dm = w.pos.diff(sp.pos).asDirMag();
-            let hitMag = sp.vel.magnitudeInDir(dm.dir);
-
             // Don't mess with magnitudes going _away_ from the world!
-            if (hitMag > 0) {
-                // Scale it back, plus a little extra for bounce!
-                let extra = hitMag / 3;
-                if (extra < 25) extra = 0;
-                sp.vel = sp.vel.diff(new ion.Velocity({dir: dm.dir, mag: hitMag + extra}));
+            let j = w.findJumperAt(sp.pos);
+            if (j) {
+                // Hit the jumper. Velocity will be completely replaced by the jump.
+                sp.vel = j.vel;
+            }
+            else {
+                // Find the portion of the velocity that is heading into the world's center.
+                let dm = w.pos.diff(sp.pos).asDirMag();
+                let hitMag = sp.vel.magnitudeInDir(dm.dir);
+                if (hitMag > 0) {
+                    // Scale it back, plus a little extra for bounce!
+                    let extra = hitMag / 3;
+                    if (extra < 25) extra = 0;
+                    sp.vel = sp.vel.diff(new ion.Velocity({ dir: dm.dir, mag: hitMag + extra }));
 
-                // Also ensure that the player can't go beneath the surface of the world.
-                // sp.pos = sp.lastPos; // This isn't working. Using the following instead:
-                //
-                // Adjust player distance from world center, so that it's never
-                // submerged. Well, we slightly submerge it so it's detected as "touching"
-                /*
-                dm.dir += D.TAU/2;
-                dm.mag = w.pos.distFrom(sp.pos);
-                sp.pos = new ion.Point(dm);
-                */
+                    // Also ensure that the player can't go beneath the surface of the world.
+                    // sp.pos = sp.lastPos; // This isn't working. Using the following instead:
+                    //
+                    // Adjust player distance from world center, so that it's never
+                    // submerged. Well, we slightly submerge it so it's detected as "touching"
+                    dm.dir += D.TAU / 2;
+                    dm.mag = w.pos.distFrom(sp.pos);
+                    sp.pos = new ion.Point(dm);
+                }
             }
         }
     }
