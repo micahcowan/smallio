@@ -70,3 +70,18 @@ export class Player implements ion.IDrawable {
         }
     }
 }
+
+export class Coin implements ion.IDrawable {
+    constructor(private sprite : sp.Coin) { }
+
+    draw(c : CanvasRenderingContext2D) {
+        let s = this.sprite;
+        c.beginPath();
+        c.arc(0, 0, 10, 0, D.TAU);
+        c.fillStyle = "rgba(255,255,220,1)";
+        c.fill();
+        c.strokeStyle = "black";
+        c.lineWidth = 1.2;
+        c.stroke();
+    }
+}

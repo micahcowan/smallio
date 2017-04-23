@@ -34,7 +34,17 @@ export class Jumper {
     }
 }
 
-export class World extends ion.Sprite implements ion.ISprite {
+export class Coin extends ion.Sprite implements ion.ISprite {
+    constructor(g : ion.Game, private w: World, pos: ion.Point, rot: number) {
+        super(g);
+        this.pos = pos;
+        this.rotation = rot;
+
+        this.drawer = new art.Coin(this);
+    }
+}
+
+export class World extends ion.Sprite implements ion.ISprite, ion.ISpriteContainer {
     public readonly r : number;            // Radius size of this world
     public color : string = "olive";
     constructor(g : ion.Game, pos : ion.Point, public readonly szBlocks : number) {
@@ -46,6 +56,20 @@ export class World extends ion.Sprite implements ion.ISprite {
         this.r = circumf / D.TAU;
 
         this.drawer = new art.World(this);
+
+        this.makeCoins(szBlocks);
+    }
+
+    subsprites : ion.ISprite[] = []
+
+    private makeCoins(n : number) : void {
+        let r = this.r + D.blockSize * 3/4;
+        for (let i = 0; i < n; ++i) {
+            let A = i * (D.TAU/n);
+            let x = this.pos.x + r * Math.cos(A);
+            let y = this.pos.y + r * Math.sin(A);
+            this.subsprites.push(new Coin(this.game, this, new ion.Point(x, y), A))
+        }
     }
 
     setColor(color : string) : this {
