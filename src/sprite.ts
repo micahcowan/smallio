@@ -61,6 +61,13 @@ export class Coin extends ion.Sprite implements ion.ISprite {
         this.collected = true;
     }
 
+    uncollect() : void {
+        if (this.collected && !smallio.gameWon) {
+            --smallio.score.val;
+        }
+        this.collected = false;
+    }
+
     static resetAllCoins() : void {
         smallio.player.worlds.subsprites.forEach(
             (world : World) => {

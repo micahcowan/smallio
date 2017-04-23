@@ -209,10 +209,19 @@ export let PlayerRotator : ion.IBehaviorFactory
     = (game, sprite) => new PlayerRotatorClass(game, sprite);
 
 class CollectableCoinClass extends ion.b.BehaviorFac implements ion.IUpdatable {
+    private collectedTime = 0;
     update(delta : ion.Duration) {
         let s = this.sprite as sprite.Coin;
-        if (player.pos.distFrom(this.sprite.pos) < 10)
+        if (s.collected && !gameWon) {
+            this.collectedTime += delta.s;
+            if (this.collectedTime > 15) {
+                s.uncollect();
+            }
+        }
+        else if (player.pos.distFrom(this.sprite.pos) < 10) {
+            this.collectedTime = 0;
             s.collect();
+        }
     }
 }
 
