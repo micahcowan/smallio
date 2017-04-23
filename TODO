@@ -7,6 +7,7 @@ x Make another little world, swap between them for whichever one you're closest 
 x Little jumper block that boosts your velocity.
 - Rethink gameplay into something fun and arcady that I could conceivably wrap up soon.
 .
+- ISpriteContainer should have recursive destroy
 - A smoother gravity effect? Maybe gather all the planet proximities,
   then weight constant gravity force directionally by proximities?
 - Make blocks, warp them to fit world(?)

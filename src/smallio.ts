@@ -61,7 +61,7 @@ export function gameReset() : void {
         , worlds
         , player
         , score
-        , new sprite.Baddy(game, new ion.Point(230, 220), sm.BaddySlide)
+        , new sprite.Baddy(game, new ion.Point(160, 220), sm.BaddySlide)
     ]);
 
     console.log("game reset finished")

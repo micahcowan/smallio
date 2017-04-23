@@ -58,6 +58,14 @@ export class Coin extends ion.Sprite implements ion.ISprite {
         }
         this.collected = true;
     }
+
+    static resetAllCoins() : void {
+        smallio.player.worlds.subsprites.forEach(
+            (world : World) => {
+                world.resetCoins();
+            }
+        )
+    }
 }
 
 export class World extends ion.Sprite implements ion.ISprite, ion.ISpriteContainer {
@@ -91,6 +99,17 @@ export class World extends ion.Sprite implements ion.ISprite, ion.ISpriteContain
     setColor(color : string) : this {
         this.color = color;
         return this;
+    }
+
+    resetCoins() : void {
+        this.subsprites.forEach(
+            (coin : Coin) => {
+                if (coin.collected) {
+                    coin.collected = false;
+                    --smallio.score.val;
+                }
+            }
+        )
     }
 
     public jumpers : Jumper[] = [];

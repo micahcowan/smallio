@@ -222,8 +222,9 @@ export let CollectableCoin : ion.IBehaviorFactory
 class BaddyCollisionClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(d : ion.Duration) {
         let s = this.sprite;
-        if (s.pos.distFrom(player.pos) < 25) {
-            //gameReset(); // Not working! :(
+        if (s.pos.distFrom(player.pos) < 32) {
+            //sprite.Coin.resetAllCoins();
+            gameReset(); // Not working! :(
         }
     }
 }
@@ -233,7 +234,7 @@ export let BaddyCollision : ion.IBehaviorFactory
 
 class BaddySlideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     public period = 2.5; // time in secs to complete a cycle.
-    public xSlide = -200;
+    public xSlide = -160;
     public ySlide = 340;
     public period1 = 1/2;
     public xSlide1 = 40;
