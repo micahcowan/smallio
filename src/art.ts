@@ -66,7 +66,6 @@ export class Player implements ion.IDrawable {
             //Player.img = new Image();
             Player.img = document.createElement("img");
             Player.img.src = "gfx/guy.png";
-            (window as any).mjcimg = Player.img;
         }
     }
 }
@@ -92,5 +91,29 @@ export class Coin implements ion.IDrawable {
         c.strokeStyle = "black";
         c.lineWidth = 1.2;
         c.stroke();
+    }
+}
+
+export class Baddy implements ion.IDrawable {
+    public static img : HTMLImageElement;
+
+    constructor(private sprite : sp.Baddy) {
+        if (Baddy.img === undefined) {
+            //Player.img = new Image();
+            Baddy.img = document.createElement("img");
+            Baddy.img.src = "gfx/baddy.png";
+        }
+    }
+
+    draw(c: CanvasRenderingContext2D) : void {
+        c.save();
+        try {
+            c.translate(-32, 32);
+            c.scale(1, -1);
+            c.drawImage(Baddy.img, 0, 0);
+        }
+        finally {
+            c.restore();
+        }
     }
 }

@@ -3,7 +3,7 @@ import * as sprite from "./sprite";
 import { Player } from "./sprite";
 import * as D from "./defs";
 import { Camera, SmallioCamera, CameraBehaviorFac, ICameraBehaviorFactory } from "./camera";
-import { player, playSound } from "./smallio";
+import { player, playSound, gameReset } from "./smallio";
 
 class FindNearestWorldClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {
@@ -219,10 +219,51 @@ class CollectableCoinClass extends ion.b.BehaviorFac implements ion.IUpdatable {
 export let CollectableCoin : ion.IBehaviorFactory
     = (game, sprite) => new CollectableCoinClass(game, sprite);
 
+class BaddyCollisionClass extends ion.b.BehaviorFac implements ion.IUpdatable {
+    update(d : ion.Duration) {
+        let s = this.sprite;
+        if (s.pos.distFrom(player.pos) < 25) {
+            //gameReset(); // Not working! :(
+        }
+    }
+}
+
+export let BaddyCollision : ion.IBehaviorFactory
+    = (game, sprite) => new BaddyCollisionClass(game, sprite);
+
+class BaddySlideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
+    public period = 2.5; // time in secs to complete a cycle.
+    public xSlide = -200;
+    public ySlide = 340;
+    public period1 = 1/2;
+    public xSlide1 = 40;
+    public ySlide1 = 40;
+
+    update(d : ion.Duration) {
+        let s = this.sprite as sprite.Baddy;
+        let game = this.game;
+        let timer = game.elapsed.s / this.period * D.TAU;
+        let timer1 = game.elapsed.s / this.period1 * D.TAU;
+        s.pos = new ion.Point(
+            s.startingPos.x + this.xSlide * Math.sin(timer) + this.xSlide1 * Math.sin(timer1)
+          , s.startingPos.y + this.ySlide * Math.sin(timer) + this.ySlide1 * Math.sin(timer1)
+        );
+    }
+}
+
+export let BaddySlide : ion.IBehaviorFactory
+    = (game, sprite) => {
+        let val = new BaddySlideClass(game, sprite);
+        (window as any).mjcslide = val;
+        return val;
+    }
+
+/*** Camera Behavior */
+
 class CameraFollowsPlayerClass extends CameraBehaviorFac {
     update(delta : ion.Duration) {
         let c = this.camera as SmallioCamera;
-        let ppos = c.player.pos;
+        let ppos = player.pos;
         //c.pos = new ion.Point(ppos.x, ppos.y + 80)
         c.pos = ppos;
 
@@ -231,7 +272,7 @@ class CameraFollowsPlayerClass extends CameraBehaviorFac {
         // it could work.
         //c.rotation = c.player.rotation;
 
-        let ramp = c.player.pDist / 1000;
+        let ramp = player.pDist / 1000;
         if (ramp > 1) ramp = 1;
         let targetScale = 1 - 4/5 * ramp;
         c.scale = targetScale;

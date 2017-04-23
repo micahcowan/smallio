@@ -67,7 +67,6 @@ export class Camera extends ion.Camera implements ion.ICamera {
 }
 
 export class SmallioCamera extends Camera implements ion.ICamera {
-    public player : sprite.Player
     protected behaviors = [
         sm.CameraFollowsPlayer
     ];

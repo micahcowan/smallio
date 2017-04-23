@@ -187,3 +187,18 @@ export class Score extends ion.Sprite implements ion.ISprite {
         })
     ];
 }
+
+export class Baddy extends ion.Sprite implements ion.ISprite {
+    constructor(g : ion.Game, public readonly startingPos : ion.Point, ...behaviors : ion.IBehaviorFactory[]) {
+        super(g);
+        this.pos = startingPos;
+
+        this.drawer = new art.Baddy(this);
+        this.behaviors = (this.behaviors? this.behaviors: [])
+            .concat(behaviors);
+    }
+
+    behaviors : ion.IBehaviorFactory[] = [
+        sm.BaddyCollision
+    ]
+}
