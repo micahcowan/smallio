@@ -44,6 +44,8 @@ export class Coin extends ion.Sprite implements ion.ISprite {
         this.pos = pos;
         this.rotation = rot;
 
+        ++smallio.score.maxScore;
+
         this.drawer = new art.Coin(this);
     }
 
@@ -186,12 +188,22 @@ export class Player extends ion.Sprite implements ion.ISprite {
 
 export class Score extends ion.Sprite implements ion.ISprite {
     private _score : number = 0;
+    private _maxScore : number = 0;
+    get maxScore() : number { return this._maxScore; this.redraw(); }
+    set maxScore(n : number) { this._maxScore = n; this.redraw(); }
     get val() : number { return this._score; }
     set val(n : number) {
-        this._score = n;
+        this._score = n; this.redraw();
+        if (this._maxScore > 0 && this._score == this._maxScore) {
+            smallio.setGameWon();
+        }
+    }
+    redraw() : void {
         let stext = document.getElementById("scoreText");
-        if (stext === null) return;
+        let maxtext = document.getElementById("maxScoreText");
+        if (stext === null || maxtext === null) return;
         stext.innerText = this._score.toString();
+        maxtext.innerText = this._maxScore.toString();
     }
     behaviors : ion.IBehaviorFactory[] = [
         // Music toggle handling. Doesn't belong here.
@@ -205,6 +217,10 @@ export class Score extends ion.Sprite implements ion.ISprite {
             }
         })
     ];
+    constructor(g : ion.Game) {
+        super(g);
+        this.val = 0;
+    }
 }
 
 export class Baddy extends ion.Sprite implements ion.ISprite {
@@ -220,4 +236,12 @@ export class Baddy extends ion.Sprite implements ion.ISprite {
     behaviors : ion.IBehaviorFactory[] = [
         sm.BaddyCollision
     ]
+}
+
+export class GameWon extends ion.Sprite implements ion.ISprite {
+    constructor(g: ion.Game) {
+        super(g);
+
+        this.drawer = new art.GameWon(g);
+    }
 }

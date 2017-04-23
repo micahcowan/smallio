@@ -3,7 +3,7 @@ import * as sprite from "./sprite";
 import { Player } from "./sprite";
 import * as D from "./defs";
 import { Camera, SmallioCamera, CameraBehaviorFac, ICameraBehaviorFactory } from "./camera";
-import { player, playSound, gameReset } from "./smallio";
+import { player, playSound, gameReset, gameWon } from "./smallio";
 
 class FindNearestWorldClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {
@@ -221,6 +221,7 @@ export let CollectableCoin : ion.IBehaviorFactory
 
 class BaddyCollisionClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(d : ion.Duration) {
+        if (gameWon) return;
         let s = this.sprite;
         if (s.pos.distFrom(player.pos) < 32) {
             //sprite.Coin.resetAllCoins();

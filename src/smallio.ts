@@ -26,10 +26,21 @@ function playMusic(event : any) : void {
         music.volume = 0.25;
     }
 }
+export let gameWon : boolean = false;
 export let player : sprite.Player;
 export let score : sprite.Score;
+export function setGameWon() {
+    gameWon = true;
+    setTimeout(gameReset, 6000)
+}
 export function gameReset() : void {
     console.log("game reset")
+
+    if (player) player.destroy();
+    if (score) score.destroy();
+
+    gameWon = false;
+    score = new sprite.Score(game);
     let worlds: ion.ISpriteContainer = {
         subsprites: [] // TS glitch? Can't declare worlds here directly, so push them later.
     }
@@ -54,14 +65,13 @@ export function gameReset() : void {
 
     player = new sprite.Player(game, ion.point(0, 240), worlds);
 
-    score = new sprite.Score(game);
-
     game.setScene([
         new sprite.Background(game)
         , worlds
         , player
         , score
         , new sprite.Baddy(game, new ion.Point(160, 220), sm.BaddySlide)
+        , new sprite.GameWon(game)
     ]);
 
     console.log("game reset finished")
