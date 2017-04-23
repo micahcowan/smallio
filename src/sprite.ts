@@ -9,7 +9,7 @@ export class Background extends ion.Sprite implements ion.ISprite {
 }
 
 export class Jumper {
-    public static rect : ion.Rect = {t: 5, b: -3, l: -20, r: 20};
+    public static rect : ion.Rect = {t: 10, b: -8, l: -30, r: 30};
     // quarter-second of gravity's worth of velocity.
     public static minMagnitude : number = D.gravity * 1/4;
 
