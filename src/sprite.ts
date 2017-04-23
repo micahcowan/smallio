@@ -63,6 +63,7 @@ export class Coin extends ion.Sprite implements ion.ISprite {
 
     uncollect() : void {
         if (this.collected && !smallio.gameWon) {
+            playSound('reappear');
             --smallio.score.val;
         }
         this.collected = false;
