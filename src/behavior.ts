@@ -173,16 +173,22 @@ class PlayerRotatorClass extends ion.b.BehaviorFac implements ion.IUpdatable {
         if (!w) return;
         // Rotate the player so feet point at planet.
 
-        // For now, just rotate to match. Eventually we'll want to limit
-        // how much rotation can happen per frame.
-
         // Find out which direction is from the world, toward player.
         let dm = sp.pos.diff(w.pos).asDirMag();
         // Translate into player rotation. When the direction to player
         // is straight up (TAU/4), player should be at 0 rotation.
         // So we subtract TAU/4 from the planet-to-player direction
         // to obtain player rotation.
-        sp.rotation = dm.dir - D.TAU/4;
+        let desiredDir = dm.dir - D.TAU/4;
+
+        let ROT_TIME = 1;   // Time in seconds it takes to make a full rotation
+        let maxRot = D.TAU * delta.s;
+        let desiredRot = ion.util.clampRadians(desiredDir - sp.rotation);
+        if (desiredRot > D.TAU/2)
+            desiredRot -= D.TAU;
+
+        let scaleDown = maxRot / Math.abs(desiredRot);
+        sp.rotation += desiredRot * (scaleDown < 1? scaleDown : 1);
     }
 }
 
