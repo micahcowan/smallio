@@ -112,7 +112,11 @@ export class Player extends ion.Sprite implements ion.ISprite {
       , sm.PlayerRotator
     ];
 
+    /**
+     * How much to raise the player picture above the ground.
+     */
+    public static readonly offset = 28;
     touchingWorld(w : World, fudge : number = 0) : boolean {
-        return this.pos.distFrom(w.pos) < w.r + 28 + fudge;
+        return this.pos.distFrom(w.pos) < w.r + Player.offset + fudge;
     }
 }

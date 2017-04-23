@@ -74,7 +74,7 @@ class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
             else {
                 // Scale it back, plus a little extra for bounce!
                 let extra = hitMag / 3;
-                if (extra < 25) extra = 0;
+                if (extra < 100) extra = 0;
                 sp.vel = sp.vel.diff(new ion.Velocity({ dir: dm.dir, mag: hitMag + extra }));
 
                 // Also ensure that the player can't go beneath the surface of the world.
@@ -82,9 +82,8 @@ class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
                 //
                 // Adjust player distance from world center, so that it's never
                 // submerged. Well, we slightly submerge it so it's detected as "touching"
-                dm.dir += D.TAU / 2;
-                dm.mag = w.pos.distFrom(sp.pos);
-                sp.pos = new ion.Point(dm);
+                dm.mag = w.pos.distFrom(sp.pos) //+ Player.offset;
+                sp.pos = w.pos.diff(new ion.Point(dm));
             }
         }
     }
