@@ -86,6 +86,10 @@ class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
                 // submerged. Well, we slightly submerge it so it's detected as "touching"
                 dm.mag = w.pos.distFrom(sp.pos) //+ Player.offset;
                 sp.pos = w.pos.diff(new ion.Point(dm));
+
+                // If the velocity magnitude is really tiny, zero it
+                if (sp.vel.asDirMag().mag < 1)
+                    sp.vel = new ion.Velocity(0, 0);
             }
         }
     }
@@ -201,8 +205,8 @@ class CameraFollowsPlayerClass extends CameraBehaviorFac {
     update(delta : ion.Duration) {
         let c = this.camera as SmallioCamera;
         let ppos = c.player.pos;
-        c.pos = new ion.Point(ppos.x, ppos.y + 80)
-        //c.pos = ppos;
+        //c.pos = new ion.Point(ppos.x, ppos.y + 80)
+        c.pos = ppos;
 
         // Would be nice, but (a) should chase, not match exactly,
         // and need to make the rotation smoother between planets before
