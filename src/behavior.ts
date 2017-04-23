@@ -1,12 +1,43 @@
 import * as ion from "ionsible";
 import * as sprite from "./sprite";
+import { Player } from "./sprite";
 import * as D from "./defs";
 import { Camera, SmallioCamera, CameraBehaviorFac, ICameraBehaviorFactory } from "./camera";
 
+class FindNearestWorldClass extends ion.b.BehaviorFac implements ion.IUpdatable {
+    update(delta : ion.Duration) {
+        let sp = this.sprite as Player;
+
+        // In a bigger game, could probably throttle this function to check once every so often.
+        // I doubt it matters for this one, though.
+        let worlds = sp.worlds.subsprites as sprite.World[];
+        let closestIdx = 0;
+        let closestDist = 0;
+        for (let i = 0; i != worlds.length; ++i) {
+            let w = worlds[i];
+            // Could use a faster method than distFrom that avoids the intrinsic sqrt,
+            // but then I have to square the world radius before subtracting... this is more readable.
+            let dist = sp.pos.distFrom(w.pos) - w.r;
+            if (i == 0 || dist < closestDist) {
+                closestIdx = i;
+                closestDist = dist;
+            }
+        }
+
+        sp.theWorld = worlds[closestIdx];
+        if (!sp.theWorld) sp.theWorld = null;
+    }
+}
+
+export let FindNearestWorld : ion.IBehaviorFactory
+    = (game, sprite) => new FindNearestWorldClass(game, sprite);
+
 class WorldGravityClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {
-        let sp = this.sprite;
-        let w = sprite.World.theWorld; // XXX
+        let sp = this.sprite as Player;
+        let w = sp.theWorld;
+
+        if (!w) return;
         
         // XXX this indicates a major clunk in ionsible
         let dm = w.pos.diff(sp.pos).asDirMag();
@@ -21,8 +52,9 @@ export let WorldGravity : ion.IBehaviorFactory
 
 class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {
-        let w = sprite.World.theWorld; // XXX
         let sp = this.sprite as sprite.Player;
+        let w = sp.theWorld;
+        if (!w) return;
         
         // Ensure that falling stops at the planet surface.
         if (sp.touchingWorld !== undefined && sp.touchingWorld(w)) {
@@ -42,9 +74,11 @@ class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
                 //
                 // Adjust player distance from world center, so that it's never
                 // submerged. Well, we slightly submerge it so it's detected as "touching"
+                /*
                 dm.dir += D.TAU/2;
                 dm.mag = w.pos.distFrom(sp.pos);
                 sp.pos = new ion.Point(dm);
+                */
             }
         }
     }
@@ -55,7 +89,8 @@ export let WorldCollide : ion.IBehaviorFactory
 
 export let playerJump = (s : any) => {
     let sp = s as sprite.Player;
-    let w = sprite.World.theWorld;
+    let w = sp.theWorld;
+    if (!w) return;
 
     // Only jump if we're on the world surface.
     if (!sp.touchingWorld(w, 10)) return;
@@ -73,7 +108,8 @@ let playerMover : (inDir : number) => ion.b.KeyHandlerCallback
     = (inDir) => ((game, s, delta) => {
 
     let sp = s as sprite.Player;
-    let w = sprite.World.theWorld;
+    let w = sp.theWorld;
+    if (!w) return;
 
     // Find out which direction is from the world, toward player.
     let dm = sp.pos.diff(w.pos).asDirMag();
@@ -89,8 +125,9 @@ export let playerRight : ion.b.KeyHandlerCallback = playerMover(-D.TAU/4);
 
 class PlayerLateralFrictionClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {
-        let sp = this.sprite;
-        let w = sprite.World.theWorld;
+        let sp = this.sprite as Player;
+        let w = sp.theWorld;
+        if (!w) return;
         // Reduce lateral motion
 
         // Find out which direction is from the world, toward player.
@@ -126,8 +163,9 @@ export let PlayerLateralFriction : ion.IBehaviorFactory
 
 class PlayerRotatorClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {
-        let sp = this.sprite;
-        let w = sprite.World.theWorld;
+        let sp = this.sprite as Player;
+        let w = sp.theWorld;
+        if (!w) return;
         // Rotate the player so feet point at planet.
 
         // For now, just rotate to match. Eventually we'll want to limit

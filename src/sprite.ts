@@ -11,7 +11,6 @@ export class Background extends ion.Sprite implements ion.ISprite {
 export class World extends ion.Sprite implements ion.ISprite {
     public readonly r : number;            // Radius size of this world
     public color : string = "olive";
-    public static theWorld : World;
     constructor(g : ion.Game, pos : ion.Point, public readonly szBlocks : number) {
         super(g);
 
@@ -21,21 +20,30 @@ export class World extends ion.Sprite implements ion.ISprite {
         this.r = circumf / D.TAU;
 
         this.drawer = new art.World(this);
+    }
 
-        if (World.theWorld === undefined)
-            World.theWorld = this;
+    setColor(color : string) : this {
+        this.color = color;
+        return this;
     }
 }
 
 export class Player extends ion.Sprite implements ion.ISprite {
-    constructor(g : ion.Game, pos : ion.Point) {
+    /**
+     * The nearest world to the player, and the one whose
+     * gravity is applying force to the player.
+     */
+    theWorld : World | null = null;
+
+    constructor(g : ion.Game, pos : ion.Point, public worlds : ion.ISpriteContainer) {
         super(g);
         this.drawer = new art.Player(this);
         this.pos = pos;
     }
 
     behaviors : ion.IBehaviorFactory[] = [
-        sm.WorldGravity
+        sm.FindNearestWorld
+      , sm.WorldGravity
       , sm.WorldCollide
       , ion.b.HandleKeys([
           {
