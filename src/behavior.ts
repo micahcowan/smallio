@@ -12,7 +12,7 @@ class FindNearestWorldClass extends ion.b.BehaviorFac implements ion.IUpdatable 
         // I doubt it matters for this one, though.
         let worlds = sp.worlds.subsprites as sprite.World[];
         let closestIdx = 0;
-        let closestDist = 0;
+        let closestDist = 10000;
         for (let i = 0; i != worlds.length; ++i) {
             let w = worlds[i];
             // Could use a faster method than distFrom that avoids the intrinsic sqrt,
@@ -23,6 +23,8 @@ class FindNearestWorldClass extends ion.b.BehaviorFac implements ion.IUpdatable 
                 closestDist = dist;
             }
         }
+
+        sp.pDist = closestDist;
 
         sp.theWorld = worlds[closestIdx];
         if (!sp.theWorld) sp.theWorld = null;
@@ -206,6 +208,11 @@ class CameraFollowsPlayerClass extends CameraBehaviorFac {
         // and need to make the rotation smoother between planets before
         // it could work.
         //c.rotation = c.player.rotation;
+
+        let ramp = c.player.pDist / 1000;
+        if (ramp > 1) ramp = 1;
+        let targetScale = 1 - 4/5 * ramp;
+        c.scale = targetScale;
     }
 }
 

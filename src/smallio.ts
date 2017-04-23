@@ -16,6 +16,7 @@ world.addJumper(1/2 * D.TAU, 200);
 w.push(world);
 world = new sprite.World(game, ion.point(680, 520), 58).setColor("BurlyWood");
 world.addJumper(11/16 * D.TAU, 220);
+world.addJumper(7/16 * D.TAU, 300);
 w.push(world)
 
 let player = new sprite.Player(game, ion.point(0, 240), worlds);

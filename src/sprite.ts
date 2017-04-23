@@ -83,6 +83,10 @@ export class Player extends ion.Sprite implements ion.ISprite {
      */
     theWorld : World | null = null;
 
+    // reflects distance from nearest planet. Used for scaling.
+    // set by FindNearestWorld behavior.
+    pDist : number = 10000;
+
     constructor(g : ion.Game, pos : ion.Point, public worlds : ion.ISpriteContainer) {
         super(g);
         this.drawer = new art.Player(this);

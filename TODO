@@ -4,7 +4,7 @@ x Make a world, whose circumference is specified as a number of fixed-size block
 x Camera with settable position
 x Make a little guy who can run around it
 x Make another little world, swap between them for whichever one you're closest to.
-- Little jumper block that boosts your velocity.
+x Little jumper block that boosts your velocity.
 - Make blocks, warp them to fit world(?)
 .
 - Rotate camera around to follow little guy(?)
