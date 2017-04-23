@@ -8,6 +8,8 @@ let game = new ion.Game({"parent": '#gameContainer'});
 
 declare let createjs : any;
 createjs.Sound.registerSound('sfx/coin.mp3', 'coin');
+createjs.Sound.registerSound('sfx/jump.mp3', 'jump');
+createjs.Sound.registerSound('sfx/land.mp3', 'land');
 export let playSound = function (name : string) {
     return createjs.Sound.play(name);
 }

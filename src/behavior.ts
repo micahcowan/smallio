@@ -3,7 +3,7 @@ import * as sprite from "./sprite";
 import { Player } from "./sprite";
 import * as D from "./defs";
 import { Camera, SmallioCamera, CameraBehaviorFac, ICameraBehaviorFactory } from "./camera";
-import { player } from "./smallio";
+import { player, playSound } from "./smallio";
 
 class FindNearestWorldClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {
@@ -73,11 +73,17 @@ class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
             else if (hitMag > sprite.Jumper.minMagnitude && (j = w.findJumperAt(sp.pos))) {
                 // Hit the jumper. Velocity will be completely replaced by the jump.
                 sp.vel = j.vel;
+                playSound('jump');
             }
             else {
                 // Scale it back, plus a little extra for bounce!
                 let extra = hitMag / 3;
-                if (extra < 100) extra = 0;
+                if (extra < 100) {
+                    extra = 0;
+                }
+                else if (hitMag > D.jumpSpeed * 1.5) {
+                    playSound('land');
+                }
                 sp.vel = sp.vel.diff(new ion.Velocity({ dir: dm.dir, mag: hitMag + extra }));
 
                 // Also ensure that the player can't go beneath the surface of the world.
