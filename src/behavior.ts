@@ -1,6 +1,7 @@
 import * as ion from "ionsible";
 import * as sprite from "./sprite";
 import * as D from "./defs";
+import { Camera, SmallioCamera, CameraBehaviorFac, ICameraBehaviorFactory } from "./camera";
 
 class WorldGravityClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {
@@ -37,12 +38,14 @@ class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
                 sp.vel = sp.vel.diff(new ion.Velocity({dir: dm.dir, mag: hitMag + extra}));
 
                 // Also ensure that the player can't go beneath the surface of the world.
-                sp.pos = sp.lastPos;
+                // sp.pos = sp.lastPos; // This isn't working. Using the following instead:
+                //
+                // Adjust player distance from world center, so that it's never
+                // submerged. Well, we slightly submerge it so it's detected as "touching"
+                dm.dir += D.TAU/2;
+                dm.mag = w.pos.distFrom(sp.pos);
+                sp.pos = new ion.Point(dm);
             }
-            
-            // Glitch repair: if velocity is really low, just set it to zero
-            if (sp.vel.x > -1 && sp.vel.x < 1 && sp.vel.y > -1 && sp.vel.y < 1)
-                sp.vel = new ion.Velocity(0, 0);
         }
     }
 }
@@ -55,13 +58,15 @@ export let playerJump = (s : any) => {
     let w = sprite.World.theWorld;
 
     // Only jump if we're on the world surface.
-    if (!sp.touchingWorld(w)) return;
+    if (!sp.touchingWorld(w, 10)) return;
 
     // Find out which direction is from the world, toward player.
     let dm = sp.pos.diff(w.pos).asDirMag();
     // Jump that direction
     dm.mag = D.jumpSpeed;
     sp.vel = sp.vel.combined(new ion.Velocity(dm));
+
+    // TODO: cap that velocity out, to prevent the occasional multi-triggered jump
 };
 
 let playerMover : (inDir : number) => ion.b.KeyHandlerCallback
@@ -140,3 +145,14 @@ class PlayerRotatorClass extends ion.b.BehaviorFac implements ion.IUpdatable {
 
 export let PlayerRotator : ion.IBehaviorFactory
     = (game, sprite) => new PlayerRotatorClass(game, sprite);
+
+class CameraFollowsPlayerClass extends CameraBehaviorFac {
+    update(delta : ion.Duration) {
+        let c = this.camera as SmallioCamera;
+        let ppos = c.player.pos;
+        c.pos = new ion.Point(ppos.x, ppos.y + 80)
+    }
+}
+
+export let CameraFollowsPlayer : ICameraBehaviorFactory
+    = (g: ion.Game, c: Camera) => new CameraFollowsPlayerClass(g, c);

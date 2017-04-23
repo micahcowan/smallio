@@ -56,7 +56,7 @@ export class Player extends ion.Sprite implements ion.ISprite {
       , sm.PlayerRotator
     ];
 
-    touchingWorld(w : World) : boolean {
-        return this.pos.distFrom(w.pos) < w.r + 28;
+    touchingWorld(w : World, fudge : number = 0) : boolean {
+        return this.pos.distFrom(w.pos) < w.r + 28 + fudge;
     }
 }
