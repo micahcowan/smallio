@@ -20,8 +20,7 @@ export class World implements ion.IDrawable {
         let s = this.sprite;
         let p = s.pos;
         c.beginPath();
-        c.arc(p.x, p.y, s.r, 0, D.TAU);
-        c.closePath();
+        c.arc(0, 0, s.r, 0, D.TAU);
 
         c.fillStyle = s.color;
         c.fill();
@@ -38,10 +37,14 @@ export class Player implements ion.IDrawable {
 
     draw(c : CanvasRenderingContext2D) {
         c.save();
-        c.translate(-32, 32);
-        c.scale(1, -1);
-        c.drawImage(Player.img, 0, 0);
-        c.restore();
+        try {
+            c.translate(-32, 32);
+            c.scale(1, -1);
+            c.drawImage(Player.img, 0, 0);
+        }
+        finally {
+            c.restore();
+        }
     }
 
     constructor(private sprite : sp.Player) {
