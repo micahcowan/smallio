@@ -3,6 +3,7 @@ import * as sprite from "./sprite";
 import { Player } from "./sprite";
 import * as D from "./defs";
 import { Camera, SmallioCamera, CameraBehaviorFac, ICameraBehaviorFactory } from "./camera";
+import { player } from "./smallio";
 
 class FindNearestWorldClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {
@@ -200,6 +201,17 @@ class PlayerRotatorClass extends ion.b.BehaviorFac implements ion.IUpdatable {
 
 export let PlayerRotator : ion.IBehaviorFactory
     = (game, sprite) => new PlayerRotatorClass(game, sprite);
+
+class CollectableCoinClass extends ion.b.BehaviorFac implements ion.IUpdatable {
+    update(delta : ion.Duration) {
+        let s = this.sprite as sprite.Coin;
+        if (player.pos.distFrom(this.sprite.pos) < 10)
+            s.collect();
+    }
+}
+
+export let CollectableCoin : ion.IBehaviorFactory
+    = (game, sprite) => new CollectableCoinClass(game, sprite);
 
 class CameraFollowsPlayerClass extends CameraBehaviorFac {
     update(delta : ion.Duration) {

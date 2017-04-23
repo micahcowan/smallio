@@ -76,9 +76,18 @@ export class Coin implements ion.IDrawable {
 
     draw(c : CanvasRenderingContext2D) {
         let s = this.sprite;
+        if (s.collected) return;
+
         c.beginPath();
+
+        c.save();
+        c.transform(1,0,0,1.33,0,0);
+
         c.arc(0, 0, 10, 0, D.TAU);
-        c.fillStyle = "rgba(255,255,220,1)";
+
+        c.restore();
+
+        c.fillStyle = "#ff8";
         c.fill();
         c.strokeStyle = "black";
         c.lineWidth = 1.2;

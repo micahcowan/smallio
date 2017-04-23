@@ -6,6 +6,12 @@ import * as D from "./defs";
 
 let game = new ion.Game({"parent": '#gameContainer'});
 
+declare let createjs : any;
+createjs.Sound.registerSound('sfx/coin.mp3', 'coin');
+export let playSound = function (name : string) {
+    return createjs.Sound.play(name);
+}
+
 let worlds : ion.ISpriteContainer = {
     subsprites: [] // TS glitch? Can't declare worlds here directly, so push them later.
 }
@@ -28,7 +34,7 @@ world = new sprite.World(game, ion.point(-100, 450), 7).setColor("#261");
 world.addJumper(1/8 * D.TAU, 200)
 w.push(world);
 
-let player = new sprite.Player(game, ion.point(0, 240), worlds);
+export let player = new sprite.Player(game, ion.point(0, 240), worlds);
 
 game.setScene([
     new sprite.Background(game)

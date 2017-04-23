@@ -3,6 +3,7 @@ import * as ion from "ionsible";
 import * as D from "./defs";
 import * as art from "./art";
 import * as sm from "./behavior";
+import { playSound } from "./smallio";
 
 export class Background extends ion.Sprite implements ion.ISprite {
     drawer : ion.IDrawable = new art.Background();
@@ -35,12 +36,24 @@ export class Jumper {
 }
 
 export class Coin extends ion.Sprite implements ion.ISprite {
+    public collected : boolean = false;
+
     constructor(g : ion.Game, private w: World, pos: ion.Point, rot: number) {
         super(g);
         this.pos = pos;
         this.rotation = rot;
 
         this.drawer = new art.Coin(this);
+    }
+
+    behaviors : ion.IBehaviorFactory[] = [
+        sm.CollectableCoin
+    ]
+
+    collect() : void {
+        if (!this.collected)
+            playSound('coin');
+        this.collected = true;
     }
 }
 
@@ -68,7 +81,7 @@ export class World extends ion.Sprite implements ion.ISprite, ion.ISpriteContain
             let A = i * (D.TAU/n);
             let x = this.pos.x + r * Math.cos(A);
             let y = this.pos.y + r * Math.sin(A);
-            this.subsprites.push(new Coin(this.game, this, new ion.Point(x, y), A))
+            this.subsprites.push(new Coin(this.game, this, new ion.Point(x, y), A - D.TAU/4))
         }
     }
 
