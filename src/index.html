@@ -7,11 +7,42 @@
         <style type="text/css">
             body {
                 width: 100%;
+                font-family: Arial, Helvetica, sans-serif;
             }
 
             #gameContainer {
                 width: 100%;
                 text-align: center;
+            }
+
+            #info {
+                font-variant: small-caps;
+                position: fixed;
+                margin: 2em;
+                padding: 1em;
+                background: rgba(220,220,255,0.7);
+            }
+
+            #scoreContainer {
+                border: solid black 1.2px;
+                width: 100%;
+                padding: 0;
+            }
+
+            #scoreContainer p {
+                margin: 0.2em;
+                width: 100%;
+            }
+
+            #score {
+                font-size: 1.2em;
+            }
+
+            #scoreText {
+                display: block;
+                float: right;
+                margin-right: 0.5em;;
+                margin-left: auto;
             }
 
             canvas {
@@ -21,6 +52,18 @@
         </style>
     </head>
     <body>
+        <div id="info">
+            <div id="scoreContainer">
+            <p id="score"><b>Score:</b> <span id="scoreText">0</span></p>
+            </div>
+
+            <p>
+            D/Right: walk clockwise<br />
+            A/Left: walk counter-clockwise<br />
+            W/Up/Space: jump
+
+            <p>Press &lsquo;M&rsquo; to toggle music</p>
+        </div>
         <div id="gameContainer"></div>
         <script src="smallio-all.js"></script>
     </body>

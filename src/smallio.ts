@@ -12,6 +12,18 @@ export let playSound = function (name : string) {
     return createjs.Sound.play(name);
 }
 
+createjs.Sound.addEventListener("fileload", playMusic);
+createjs.Sound.registerSound("music/diddly.mp3", "music");
+export let music : any;
+
+function playMusic(event : any) : void {
+    if (event.id == "music" && music === undefined) {
+        music = createjs.Sound.play("music", {loop: -1});
+        (window as any).gameMusic = music;
+        music.volume = 0.25;
+    }
+}
+
 let worlds : ion.ISpriteContainer = {
     subsprites: [] // TS glitch? Can't declare worlds here directly, so push them later.
 }
@@ -36,10 +48,13 @@ w.push(world);
 
 export let player = new sprite.Player(game, ion.point(0, 240), worlds);
 
+export let score = new sprite.Score(game);
+
 game.setScene([
     new sprite.Background(game)
   , worlds
   , player
+  , score
 ]);
 
 let camera = new SmallioCamera(game, game.canvas);

@@ -7,7 +7,7 @@ TSC = ./node_modules/.bin/tsc
 #TSCOPT = -d #-t ES5 --sourceMap --noImplicitAny --strictNullChecks
 BIFY = ./node_modules/.bin/browserify -d -p [ tsify ]
 
-all: browserify build/index.html build/gfx build/sfx
+all: browserify build/index.html build/gfx build/sfx build/music
 
 build: build/smallio.js
 build/smallio.js: $(SRC)
@@ -19,7 +19,11 @@ build/gfx: gfx/*.png
 
 build/sfx: sfx/*.mp3
 	mkdir -p build/sfx
-	cp -L $^ $@
+	cp -L $^ $@/
+
+build/music: music/*.mp3
+	mkdir -p $@
+	cp -L $^ $@/
 
 build/index.html:
 	ln -sf ../src/index.html $@

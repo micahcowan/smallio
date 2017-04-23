@@ -3,7 +3,8 @@ import * as ion from "ionsible";
 import * as D from "./defs";
 import * as art from "./art";
 import * as sm from "./behavior";
-import { playSound } from "./smallio";
+import { playSound, music } from "./smallio";
+import * as smallio from "./smallio";
 
 export class Background extends ion.Sprite implements ion.ISprite {
     drawer : ion.IDrawable = new art.Background();
@@ -51,8 +52,10 @@ export class Coin extends ion.Sprite implements ion.ISprite {
     ]
 
     collect() : void {
-        if (!this.collected)
+        if (!this.collected) {
             playSound('coin');
+            ++smallio.score.val;
+        }
         this.collected = true;
     }
 }
@@ -160,4 +163,27 @@ export class Player extends ion.Sprite implements ion.ISprite {
     touchingWorld(w : World, fudge : number = 0) : boolean {
         return this.pos.distFrom(w.pos) < w.r + Player.offset + fudge;
     }
+}
+
+export class Score extends ion.Sprite implements ion.ISprite {
+    private _score : number = 0;
+    get val() : number { return this._score; }
+    set val(n : number) {
+        this._score = n;
+        let stext = document.getElementById("scoreText");
+        if (stext === null) return;
+        stext.innerText = this._score.toString();
+    }
+    behaviors : ion.IBehaviorFactory[] = [
+        // Music toggle handling. Doesn't belong here.
+        ion.b.OnKey({
+            keyUp: 'M'
+          , fire: (sprite: any) => {
+                if (music.paused)
+                    music.resume();
+                else
+                    music.pause();
+            }
+        })
+    ];
 }
