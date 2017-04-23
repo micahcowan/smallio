@@ -214,7 +214,7 @@ class CollectableCoinClass extends ion.b.BehaviorFac implements ion.IUpdatable {
         let s = this.sprite as sprite.Coin;
         if (s.collected && !gameWon) {
             this.collectedTime += delta.s;
-            if (this.collectedTime > 15) {
+            if (this.collectedTime > 20) {
                 s.uncollect();
             }
         }
@@ -241,6 +241,26 @@ class BaddyCollisionClass extends ion.b.BehaviorFac implements ion.IUpdatable {
 
 export let BaddyCollision : ion.IBehaviorFactory
     = (game, sprite) => new BaddyCollisionClass(game, sprite);
+
+class BaddyWorldGlideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
+    update(d : ion.Duration) {
+        let r = this.world.r;
+        let w = this.world.pos;
+        let timer = this.game.elapsed.s / this.speed * D.TAU;
+
+        this.sprite.pos = new ion.Point(
+            w.x + r * Math.cos(timer)
+          , w.y + r * Math.sin(timer)
+        );
+    }
+
+    constructor(g : ion.Game, s : ion.Sprite, private world : sprite.World, private speed : number) {
+        super(g, s);
+    }
+}
+
+export let BaddyWorldGlide : (w: sprite.World, spd: number) => ion.IBehaviorFactory
+    = (w, spd) => ((g: ion.Game, s: ion.Sprite) => new BaddyWorldGlideClass(g, s, w, spd));
 
 class BaddySlideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     public period = 2.5; // time in secs to complete a cycle.

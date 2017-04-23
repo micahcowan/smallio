@@ -51,7 +51,7 @@ export function gameReset() : void {
     world.addJumper(1 / 2 * D.TAU, 200);
     w.push(world);
     //world = new sprite.World(game, ion.point(680, 520), 58).setColor("BurlyWood");
-    world = new sprite.World(game, ion.point(549, 389), 29).setColor("BurlyWood");
+    let bigWorld = world = new sprite.World(game, ion.point(549, 389), 29).setColor("BurlyWood");
     let newp = ion.point(680, 520).diff(new ion.Point({ dir: 1 / 8 * D.TAU, mag: world.r / 2 }))
     console.log(newp.x + ", " + newp.y)
     world.addJumper(1 / 2 * D.TAU, 270);
@@ -72,6 +72,8 @@ export function gameReset() : void {
         , player
         , score
         , new sprite.Baddy(game, new ion.Point(160, 220), sm.BaddySlide)
+        , new sprite.Baddy(game, bigWorld.pos, sm.BaddyWorldGlide(bigWorld, 4))
+        , new sprite.Baddy(game, bigWorld.pos, sm.BaddyWorldGlide(bigWorld, -3))
         , new sprite.GameWon(game)
     ]);
 
