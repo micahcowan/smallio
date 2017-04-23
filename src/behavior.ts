@@ -200,6 +200,12 @@ class CameraFollowsPlayerClass extends CameraBehaviorFac {
         let c = this.camera as SmallioCamera;
         let ppos = c.player.pos;
         c.pos = new ion.Point(ppos.x, ppos.y + 80)
+        //c.pos = ppos;
+
+        // Would be nice, but (a) should chase, not match exactly,
+        // and need to make the rotation smoother between planets before
+        // it could work.
+        //c.rotation = c.player.rotation;
     }
 }
 
