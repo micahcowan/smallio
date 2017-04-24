@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <title>Super Smallio World</title>
+        <title>Super Small-io World</title>
         <script src="http://code.createjs.com/soundjs-0.6.0.min.js"></script>
         
         <style type="text/css">
@@ -45,6 +45,11 @@
                 margin-left: auto;
             }
 
+            #title {
+                font-weight: bold;
+                font-size: 1.5em;
+            }
+
             canvas {
                 height: 100%;
                 margin: 0 auto;
@@ -53,6 +58,8 @@
     </head>
     <body>
         <div id="info">
+            <p id="title">Super Small-io World!</p>
+
             <div id="scoreContainer">
                 <p id="score"><b>Score:</b>
                 <span id="scoreSpan"><span id="scoreText">0</span> / <span
@@ -69,7 +76,7 @@
             <p>Work fast! Coins reappear! ^_^</p>
 
             <p>Written for Ludum Dare 38!</p>
-            <p>Source code at: https://github.com/micahcowan/smallio/
+            <p>Source code at:<br />https://github.com/micahcowan/smallio/
         </div>
         <div id="gameContainer"></div>
         <script src="smallio-all.js"></script>
