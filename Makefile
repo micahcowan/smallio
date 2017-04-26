@@ -26,7 +26,7 @@ build/music: music/*.mp3
 	cp -L $^ $@/
 
 build/index.html:
-	ln -sf ../src/index.html $@
+	cp -L src/index.html $@
 
 watch: $(SRC)
 	$(TSC) -w
