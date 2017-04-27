@@ -1,4 +1,4 @@
-import * as ion from "ionsible";
+import * as ion from "./ionsible/ionsible";
 
 import * as D from "./defs";
 import * as art from "./art";

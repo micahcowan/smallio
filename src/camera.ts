@@ -1,4 +1,4 @@
-import * as ion from "ionsible";
+import * as ion from "./ionsible/ionsible";
 
 import * as sprite from "./sprite";
 import * as sm from "./behavior";
