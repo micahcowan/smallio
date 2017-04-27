@@ -53,8 +53,7 @@ export class Player implements ion.IDrawable {
     draw(c : CanvasRenderingContext2D) {
         c.save();
         try {
-            c.translate(-32, 32);
-            c.scale(1, -1);
+            c.translate(-32, -32);
             c.drawImage(Player.img, 0, 0);
         }
         finally {
@@ -109,8 +108,7 @@ export class Baddy implements ion.IDrawable {
     draw(c: CanvasRenderingContext2D) : void {
         c.save();
         try {
-            c.translate(-32, 32);
-            c.scale(1, -1);
+            c.translate(-32, -32);
             c.drawImage(Baddy.img, 0, 0);
         }
         finally {

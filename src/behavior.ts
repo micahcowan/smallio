@@ -137,9 +137,9 @@ let playerMover : (inDir : number) => ion.b.KeyHandlerCallback
     sp.vel = sp.vel.advanced(new ion.Acceleration(dm), delta)
 });
 
-export let playerLeft : ion.b.KeyHandlerCallback = playerMover(D.TAU/4);
+export let playerLeft : ion.b.KeyHandlerCallback = playerMover(-D.TAU/4);
 
-export let playerRight : ion.b.KeyHandlerCallback = playerMover(-D.TAU/4);
+export let playerRight : ion.b.KeyHandlerCallback = playerMover(D.TAU/4);
 
 class PlayerLateralFrictionClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {
@@ -187,7 +187,7 @@ class PlayerRotatorClass extends ion.b.BehaviorFac implements ion.IUpdatable {
         // Rotate the player so feet point at planet.
 
         // Find out which direction is from the world, toward player.
-        let dm = sp.pos.diff(w.pos).asDirMag();
+        let dm = w.pos.diff(sp.pos).asDirMag();
         // Translate into player rotation. When the direction to player
         // is straight up (TAU/4), player should be at 0 rotation.
         // So we subtract TAU/4 from the planet-to-player direction
@@ -264,11 +264,11 @@ export let BaddyWorldGlide : (w: sprite.World, spd: number) => ion.IBehaviorFact
 
 class BaddySlideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     public period = 2.5; // time in secs to complete a cycle.
-    public xSlide = -160;
+    public xSlide = 160;
     public ySlide = 340;
     public period1 = 1/2;
     public xSlide1 = 40;
-    public ySlide1 = 40;
+    public ySlide1 = -40;
 
     update(d : ion.Duration) {
         let s = this.sprite as sprite.Baddy;
@@ -295,6 +295,7 @@ class CameraFollowsPlayerClass extends CameraBehaviorFac {
     update(delta : ion.Duration) {
         let c = this.camera as SmallioCamera;
         let ppos = player.pos;
+        let ctr = this.game.center;
         //c.pos = new ion.Point(ppos.x, ppos.y + 80)
         c.pos = ppos;
 
@@ -302,6 +303,7 @@ class CameraFollowsPlayerClass extends CameraBehaviorFac {
         // and need to make the rotation smoother between planets before
         // it could work.
         //c.rotation = c.player.rotation;
+        //c.rotation = D.TAU / 2;
 
         let ramp = player.pDist / 1000;
         if (ramp > 1) ramp = 1;

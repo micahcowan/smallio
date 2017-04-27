@@ -47,33 +47,31 @@ export function gameReset() : void {
     }
     let w = worlds.subsprites;
     let world = new sprite.World(game, ion.point(0, 0), 20);
-    world.addJumper(15 / 16 * D.TAU, 300);
-    world.addJumper(1 / 2 * D.TAU, 200);
+    world.addJumper(15 / 16 * -D.TAU, 300);
+    world.addJumper(1 / 2 * -D.TAU, 200);
     w.push(world);
     //world = new sprite.World(game, ion.point(680, 520), 58).setColor("BurlyWood");
-    let bigWorld = world = new sprite.World(game, ion.point(549, 389), 29).setColor("BurlyWood");
-    let newp = ion.point(680, 520).diff(new ion.Point({ dir: 1 / 8 * D.TAU, mag: world.r / 2 }))
-    console.log(newp.x + ", " + newp.y)
-    world.addJumper(1 / 2 * D.TAU, 270);
-    world.addJumper(39 / 64 * D.TAU, 140);
-    world.addJumper(13 / 16 * D.TAU, 250);
+    let bigWorld = world = new sprite.World(game, ion.point(549, -389), 29).setColor("BurlyWood");
+    world.addJumper(1 / 2 * -D.TAU, 270);
+    world.addJumper(39 / 64 * -D.TAU, 140);
+    world.addJumper(13 / 16 * -D.TAU, 250);
     w.push(world);
-    world = new sprite.World(game, ion.point(-200, 200), 7).setColor("#612");
+    world = new sprite.World(game, ion.point(-200, -200), 7).setColor("#612");
     w.push(world);
-    world = new sprite.World(game, ion.point(-100, 450), 7).setColor("#261");
-    world.addJumper(1 / 8 * D.TAU, 200)
+    world = new sprite.World(game, ion.point(-100, -450), 7).setColor("#261");
+    world.addJumper(1 / 8 * -D.TAU, 200)
     w.push(world);
 
-    player = new sprite.Player(game, ion.point(0, 240), worlds);
+    player = new sprite.Player(game, ion.point(0, -240), worlds);
 
     game.setScene([
         new sprite.Background(game)
         , worlds
         , player
         , score
-        , new sprite.Baddy(game, new ion.Point(160, 220), sm.BaddySlide)
-        , new sprite.Baddy(game, bigWorld.pos, sm.BaddyWorldGlide(bigWorld, 4))
-        , new sprite.Baddy(game, bigWorld.pos, sm.BaddyWorldGlide(bigWorld, -3))
+        , new sprite.Baddy(game, new ion.Point(160, -220), sm.BaddySlide)
+        , new sprite.Baddy(game, bigWorld.pos, sm.BaddyWorldGlide(bigWorld, -4))
+        , new sprite.Baddy(game, bigWorld.pos, sm.BaddyWorldGlide(bigWorld, 3))
         , new sprite.GameWon(game)
     ]);
 
