@@ -21,15 +21,15 @@ src/ionsible:
 build/smallio.js: $(SRC)
 	$(TSC)
 
-build/gfx: build gfx/*.png
+build/gfx: gfx/*.png
 	mkdir -p build/gfx
 	cp -L gfx/*.png build/gfx
 
-build/sfx: build sfx/*.mp3
+build/sfx: sfx/*.mp3
 	mkdir -p build/sfx
 	cp -L $^ $@/
 
-build/music: build music/*.mp3
+build/music: music/*.mp3
 	mkdir -p $@
 	cp -L $^ $@/
 
