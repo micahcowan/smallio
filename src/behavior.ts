@@ -11,6 +11,7 @@ class FindNearestWorldClass extends ion.b.BehaviorFac implements ion.IUpdatable 
 
         // In a bigger game, could probably throttle this function to check once every so often.
         // I doubt it matters for this one, though.
+        // FIXME: surely this could be more terse?
         let worlds = sp.worlds.subsprites as sprite.World[];
         let closestIdx = 0;
         let closestDist = 10000;
@@ -36,6 +37,8 @@ export let FindNearestWorld : ion.IBehaviorFactory
     = (game, sprite) => new FindNearestWorldClass(game, sprite);
 
 class WorldGravityClass extends ion.b.BehaviorFac implements ion.IUpdatable {
+    // FIXME: A generalized vrsion of this ought to exist in ionsible.
+    // Perhaps expressiong a tagged groups that gravitate one toward the other.
     update(delta : ion.Duration) {
         let sp = this.sprite as Player;
         let w = sp.theWorld;
@@ -50,6 +53,8 @@ export let WorldGravity : ion.IBehaviorFactory
     = (game, sprite) => new WorldGravityClass(game, sprite);
 
 class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
+    // FIXME: This ought to use body collisions, and be, or be based on,
+    // a generalized implementation within ionsible.
     update(delta : ion.Duration) {
         let sp = this.sprite as sprite.Player;
         let w = sp.theWorld;
@@ -90,7 +95,7 @@ class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
                 dm.mag = w.pos.distFrom(sp.pos) //+ Player.offset;
                 sp.pos = w.pos.diff(ion.point(dm));
 
-                // If the velocity magnitude is really tiny, zero it
+                // If the velocity magnitude is small, zero it
                 if (sp.vel.asDirMag().mag < 1)
                     sp.vel = ion.veloc(0, 0);
             }
