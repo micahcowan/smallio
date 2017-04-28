@@ -69,7 +69,7 @@ export function gameReset() : void {
         , worlds
         , player
         , score
-        , new sprite.Baddy(game, new ion.Point(160, -220), sm.BaddySlide)
+        , new sprite.Baddy(game, ion.point(160, -220), sm.BaddySlide)
         , new sprite.Baddy(game, bigWorld.pos, sm.BaddyWorldGlide(bigWorld, -4))
         , new sprite.Baddy(game, bigWorld.pos, sm.BaddyWorldGlide(bigWorld, 3))
         , new sprite.GameWon(game)

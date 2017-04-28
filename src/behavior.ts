@@ -42,11 +42,7 @@ class WorldGravityClass extends ion.b.BehaviorFac implements ion.IUpdatable {
 
         if (!w) return;
         
-        // XXX this indicates a major clunk in ionsible
-        let dm = w.pos.diff(sp.pos).asDirMag();
-        dm.mag = D.gravity; // set the accel amount
-        let accel = new ion.Acceleration(dm);
-        sp.vel = sp.vel.advanced(accel, delta);
+        sp.vel = sp.vel.combined(ion.accelToward(sp.pos, w.pos, delta, D.gravity));
     }
 }
 
@@ -84,7 +80,7 @@ class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
                 else if (hitMag > D.jumpSpeed * 1.5) {
                     playSound('land');
                 }
-                sp.vel = sp.vel.diff(new ion.Velocity({ dir: dm.dir, mag: hitMag + extra }));
+                sp.vel = sp.vel.diff(ion.veloc({ dir: dm.dir, mag: hitMag + extra }));
 
                 // Also ensure that the player can't go beneath the surface of the world.
                 // sp.pos = sp.lastPos; // This isn't working. Using the following instead:
@@ -92,11 +88,11 @@ class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
                 // Adjust player distance from world center, so that it's never
                 // submerged. Well, we slightly submerge it so it's detected as "touching"
                 dm.mag = w.pos.distFrom(sp.pos) //+ Player.offset;
-                sp.pos = w.pos.diff(new ion.Point(dm));
+                sp.pos = w.pos.diff(ion.point(dm));
 
                 // If the velocity magnitude is really tiny, zero it
                 if (sp.vel.asDirMag().mag < 1)
-                    sp.vel = new ion.Velocity(0, 0);
+                    sp.vel = ion.veloc(0, 0);
             }
         }
     }
@@ -117,7 +113,7 @@ export let playerJump = (s : any) => {
     let dm = sp.pos.diff(w.pos).asDirMag();
     // Jump that direction
     dm.mag = D.jumpSpeed;
-    sp.vel = sp.vel.combined(new ion.Velocity(dm));
+    sp.vel = sp.vel.combined(ion.veloc(dm));
 
     // TODO: cap that velocity out, to prevent the occasional multi-triggered jump
 };
@@ -134,7 +130,7 @@ let playerMover : (inDir : number) => ion.b.KeyHandlerCallback
     // Accelerate to the side of that.
     dm.dir = dm.dir + inDir;
     dm.mag = D.lateralAccel;
-    sp.vel = sp.vel.advanced(new ion.Acceleration(dm), delta)
+    sp.vel = sp.vel.advanced(ion.accel(dm), delta)
 });
 
 export let playerLeft : ion.b.KeyHandlerCallback = playerMover(-D.TAU/4);
@@ -158,12 +154,12 @@ class PlayerLateralFrictionClass extends ion.b.BehaviorFac implements ion.IUpdat
         let redMag = D.lateralFriction;
         if (redMag * delta.s > Math.abs(mag)) {
             // We've exhausted the velocity in this direction. Consume all energy.
-            sp.vel = sp.vel.diff(new ion.Velocity({dir: perp, mag: mag}))
+            sp.vel = sp.vel.diff(ion.veloc({dir: perp, mag: mag}))
         }
         else {
             if ((redMag > 0) == (mag > 0))
                 redMag = -redMag;
-            sp.vel = sp.vel.advanced(new ion.Acceleration({dir: perp, mag: redMag}), delta);
+            sp.vel = sp.vel.advanced(ion.accel({dir: perp, mag: redMag}), delta);
         }
 
         // Ensure the total lateral speed doesn't exceed maximum.
@@ -171,7 +167,7 @@ class PlayerLateralFrictionClass extends ion.b.BehaviorFac implements ion.IUpdat
         if (Math.abs(mag) > D.maxLateralVel) {
             redMag = D.maxLateralVel - Math.abs(mag);
             if (mag > 0) redMag = -redMag;
-            sp.vel = sp.vel.diff(new ion.Velocity({dir: perp, mag: redMag}));
+            sp.vel = sp.vel.diff(ion.veloc({dir: perp, mag: redMag}));
         }
     }
 }
@@ -248,7 +244,7 @@ class BaddyWorldGlideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
         let w = this.world.pos;
         let timer = this.game.elapsed.s / this.speed * D.TAU;
 
-        this.sprite.pos = new ion.Point(
+        this.sprite.pos = ion.point(
             w.x + r * Math.cos(timer)
           , w.y + r * Math.sin(timer)
         );
@@ -275,7 +271,7 @@ class BaddySlideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
         let game = this.game;
         let timer = game.elapsed.s / this.period * D.TAU;
         let timer1 = game.elapsed.s / this.period1 * D.TAU;
-        s.pos = new ion.Point(
+        s.pos = ion.point(
             s.startingPos.x + this.xSlide * Math.sin(timer) + this.xSlide1 * Math.sin(timer1)
           , s.startingPos.y + this.ySlide * Math.sin(timer) + this.ySlide1 * Math.sin(timer1)
         );
@@ -296,7 +292,7 @@ class CameraFollowsPlayerClass extends CameraBehaviorFac {
         let c = this.camera as SmallioCamera;
         let ppos = player.pos;
         let ctr = this.game.center;
-        //c.pos = new ion.Point(ppos.x, ppos.y + 80)
+        //c.pos = ion.point(ppos.x, ppos.y + 80)
         c.pos = ppos;
 
         // Would be nice, but (a) should chase, not match exactly,

@@ -18,7 +18,7 @@ export class Jumper {
     public readonly vel : ion.Velocity;
     constructor(public world : World, public readonly dir : number, public readonly height : number) {
         // Calculate magnitude of velocity from height
-        this.vel = new ion.Velocity({dir: dir, mag: D.getSpeedFromDist(height)});
+        this.vel = ion.veloc({dir: dir, mag: D.getSpeedFromDist(height)});
     }
 
     matchesDir(dir : number) : boolean {
@@ -102,7 +102,7 @@ export class World extends ion.Sprite implements ion.ISprite, ion.ISpriteContain
             let A = i * (D.TAU/n);
             let x = this.pos.x + r * Math.cos(A);
             let y = this.pos.y + r * Math.sin(A);
-            this.subsprites.push(new Coin(this.game, this, new ion.Point(x, y), A - D.TAU/4))
+            this.subsprites.push(new Coin(this.game, this, ion.point(x, y), A - D.TAU/4))
         }
     }
 
