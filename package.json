@@ -30,10 +30,10 @@
   },
   "homepage": "https://github.com/micahcowan/smallio#readme",
   "devDependencies": {
-    "browserify": "^13.3.0",
+    "browserify": "^14.3.0",
     "ionsible": "file:../ionsible",
     "tsify": "^3.0.1",
-    "typescript": "^2.2.2",
+    "typescript": "^2.3.1",
     "watchify": "^3.9.0"
   }
 }
