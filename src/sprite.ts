@@ -49,7 +49,7 @@ export class Coin extends ion.Sprite implements ion.ISprite {
         this.drawer = new art.Coin(this);
     }
 
-    behaviors : ion.IBehaviorFactory[] = [
+    behaviors : ion.IBehaviorFactory<this>[] = [
         sm.CollectableCoin
     ]
 
@@ -166,10 +166,10 @@ export class Player extends ion.Sprite implements ion.ISprite {
     private static readonly tknMoveClockwise         = "move-clockwise";
     private static readonly tknJump                  = "jump";
 
-    behaviors : ion.IBehaviorFactory[] = [
-        sm.FindNearestWorld(this)
-      , sm.WorldGravity(this)
-      , sm.WorldCollide(this)
+    behaviors : ion.IBehaviorFactory<this>[] = [
+        sm.FindNearestWorld
+      , sm.WorldGravity
+      , sm.WorldCollide
 
       , ion.b.HandleKeys([
           {
@@ -229,7 +229,7 @@ export class Score extends ion.Sprite implements ion.ISprite {
         stext.innerText = this._score.toString();
         maxtext.innerText = this._maxScore.toString();
     }
-    behaviors : ion.IBehaviorFactory[] = [
+    behaviors : ion.IBehaviorFactory<this>[] = [
         // Music toggle handling. Doesn't belong here.
         ion.b.OnKey({
             keyUp: 'M'
@@ -248,7 +248,7 @@ export class Score extends ion.Sprite implements ion.ISprite {
 }
 
 export class Baddy extends ion.Sprite implements ion.ISprite {
-    constructor(g : ion.Game, public readonly startingPos : ion.Point, ...behaviors : ion.IBehaviorFactory[]) {
+    constructor(g : ion.Game, public readonly startingPos : ion.Point, ...behaviors : ion.IBehaviorFactory<Baddy>[]) {
         super(g);
         this.pos = startingPos;
 
@@ -257,7 +257,7 @@ export class Baddy extends ion.Sprite implements ion.ISprite {
             .concat(behaviors);
     }
 
-    behaviors : ion.IBehaviorFactory[] = [
+    behaviors : ion.IBehaviorFactory<this>[] = [
         sm.BaddyCollision
     ]
 }

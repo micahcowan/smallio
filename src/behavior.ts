@@ -34,14 +34,14 @@ class FindNearestWorldClass extends ion.b.BehaviorFac implements ion.IUpdatable 
     public sprite : Player;
 }
 
-export let FindNearestWorld : (p: Player) => ion.IBehaviorFactory
-    = (p) => (game, sprite) => new FindNearestWorldClass(game, p);
+export let FindNearestWorld : ion.IBehaviorFactory<Player>
+    = (game, sprite) => new FindNearestWorldClass(game, sprite);
 
 class WorldGravityClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     // FIXME: A generalized vrsion of this ought to exist in ionsible.
     // Perhaps expressiong a tagged groups that gravitate one toward the other.
     update(delta : ion.Duration) {
-        let sp = this.sprite as Player;
+        let sp = this.sprite;
         let w = sp.theWorld;
 
         if (!w) return;
@@ -52,8 +52,8 @@ class WorldGravityClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     public sprite : Player;
 }
 
-export let WorldGravity : (p: Player) => ion.IBehaviorFactory
-    = (p) => (game, sprite) => new WorldGravityClass(game, p);
+export let WorldGravity : ion.IBehaviorFactory<Player>
+    = (game, sprite) => new WorldGravityClass(game, sprite);
 
 class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     // FIXME: This ought to use body collisions, and be, or be based on,
@@ -108,8 +108,8 @@ class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     public sprite : Player;
 }
 
-export let WorldCollide : (p: Player) => ion.IBehaviorFactory
-    = (p) => (game, sprite) => new WorldCollideClass(game, p);
+export let WorldCollide : ion.IBehaviorFactory<Player>
+    = (game, sprite) => new WorldCollideClass(game, sprite);
 
 export let playerJump = (sp : Player) => {
     // FIXME: maybe instead fo HandleKeys and the like just passing a sprite to a function,
@@ -146,7 +146,7 @@ export let playerRight : (g: ion.Game, sp: Player, delta: ion.Duration) => void 
 
 class PlayerLateralFrictionClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {
-        let sp = this.sprite as Player;
+        let sp = this.sprite;
         let w = sp.theWorld;
         if (!w) return;
         // Reduce lateral motion
@@ -177,14 +177,16 @@ class PlayerLateralFrictionClass extends ion.b.BehaviorFac implements ion.IUpdat
             sp.vel = sp.vel.diff(ion.veloc({dir: perp, mag: redMag}));
         }
     }
+
+    public sprite : Player;
 }
 
-export let PlayerLateralFriction : ion.IBehaviorFactory
+export let PlayerLateralFriction : ion.IBehaviorFactory<Player>
     = (game, sprite) => new PlayerLateralFrictionClass(game, sprite);
 
 class PlayerRotatorClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {
-        let sp = this.sprite as Player;
+        let sp = this.sprite;
         let w = sp.theWorld;
         if (!w) return;
         // Rotate the player so feet point at planet.
@@ -206,15 +208,17 @@ class PlayerRotatorClass extends ion.b.BehaviorFac implements ion.IUpdatable {
         let scaleDown = maxRot / Math.abs(desiredRot);
         sp.rotation += desiredRot * (scaleDown < 1? scaleDown : 1);
     }
+
+    public sprite : Player
 }
 
-export let PlayerRotator : ion.IBehaviorFactory
+export let PlayerRotator : ion.IBehaviorFactory<Player>
     = (game, sprite) => new PlayerRotatorClass(game, sprite);
 
 class CollectableCoinClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     private collectedTime = 0;
     update(delta : ion.Duration) {
-        let s = this.sprite as sprite.Coin;
+        let s = this.sprite;
         if (s.collected && !gameWon) {
             this.collectedTime += delta.s;
             if (this.collectedTime > 20) {
@@ -226,9 +230,11 @@ class CollectableCoinClass extends ion.b.BehaviorFac implements ion.IUpdatable {
             s.collect();
         }
     }
+
+    public sprite : sprite.Coin;
 }
 
-export let CollectableCoin : ion.IBehaviorFactory
+export let CollectableCoin : ion.IBehaviorFactory<sprite.Coin>
     = (game, sprite) => new CollectableCoinClass(game, sprite);
 
 class BaddyCollisionClass extends ion.b.BehaviorFac implements ion.IUpdatable {
@@ -242,7 +248,7 @@ class BaddyCollisionClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     }
 }
 
-export let BaddyCollision : ion.IBehaviorFactory
+export let BaddyCollision : ion.IBehaviorFactory<ion.Sprite>
     = (game, sprite) => new BaddyCollisionClass(game, sprite);
 
 class BaddyWorldGlideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
@@ -262,7 +268,7 @@ class BaddyWorldGlideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     }
 }
 
-export let BaddyWorldGlide : (w: sprite.World, spd: number) => ion.IBehaviorFactory
+export let BaddyWorldGlide : (w: sprite.World, spd: number) => ion.IBehaviorFactory<sprite.Baddy>
     = (w, spd) => ((g: ion.Game, s: ion.Sprite) => new BaddyWorldGlideClass(g, s, w, spd));
 
 class BaddySlideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
@@ -274,7 +280,7 @@ class BaddySlideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     public ySlide1 = -40;
 
     update(d : ion.Duration) {
-        let s = this.sprite as sprite.Baddy;
+        let s = this.sprite;
         let game = this.game;
         let timer = game.elapsed.s / this.period * D.TAU;
         let timer1 = game.elapsed.s / this.period1 * D.TAU;
@@ -283,12 +289,13 @@ class BaddySlideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
           , s.startingPos.y + this.ySlide * Math.sin(timer) + this.ySlide1 * Math.sin(timer1)
         );
     }
+
+    public sprite : sprite.Baddy;
 }
 
-export let BaddySlide : ion.IBehaviorFactory
+export let BaddySlide : ion.IBehaviorFactory<sprite.Baddy>
     = (game, sprite) => {
         let val = new BaddySlideClass(game, sprite);
-        (window as any).mjcslide = val;
         return val;
     }
 
@@ -296,7 +303,7 @@ export let BaddySlide : ion.IBehaviorFactory
 
 class CameraFollowsPlayerClass extends CameraBehaviorFac {
     update(delta : ion.Duration) {
-        let c = this.camera as SmallioCamera;
+        let c = this.camera;
         let ppos = player.pos;
         let ctr = this.game.center;
         //c.pos = ion.point(ppos.x, ppos.y + 80)
