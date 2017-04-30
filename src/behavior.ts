@@ -7,34 +7,35 @@ import { player, playSound, gameReset, gameWon } from "./smallio";
 
 class FindNearestWorldClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {
-        let sp = this.sprite as Player;
+        let sp = this.sprite;
 
         // In a bigger game, could probably throttle this function to check once every so often.
         // I doubt it matters for this one, though.
         // FIXME: surely this could be more terse?
-        let worlds = sp.worlds.subsprites as sprite.World[];
-        let closestIdx = 0;
+        let subsprites = sp.worlds.subsprites;
+        let closestWorld : sprite.World | null = null;
         let closestDist = 10000;
-        for (let i = 0; i != worlds.length; ++i) {
-            let w = worlds[i];
+        for (let sub of subsprites) {
+            if (! (sub instanceof sprite.World)) continue;
+            let w : sprite.World = sub;
             // Could use a faster method than distFrom that avoids the intrinsic sqrt,
             // but then I have to square the world radius before subtracting... this is more readable.
             let dist = sp.pos.distFrom(w.pos) - w.r;
-            if (i == 0 || dist < closestDist) {
-                closestIdx = i;
+            if (dist < closestDist) {
+                closestWorld = w;
                 closestDist = dist;
             }
         }
 
         sp.pDist = closestDist;
-
-        sp.theWorld = worlds[closestIdx];
-        if (!sp.theWorld) sp.theWorld = null;
+        sp.theWorld = closestWorld;
     }
+
+    public sprite : Player;
 }
 
-export let FindNearestWorld : ion.IBehaviorFactory
-    = (game, sprite) => new FindNearestWorldClass(game, sprite);
+export let FindNearestWorld : (p: Player) => ion.IBehaviorFactory
+    = (p) => (game, sprite) => new FindNearestWorldClass(game, p);
 
 class WorldGravityClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     // FIXME: A generalized vrsion of this ought to exist in ionsible.
@@ -47,16 +48,18 @@ class WorldGravityClass extends ion.b.BehaviorFac implements ion.IUpdatable {
         
         sp.vel = sp.vel.combined(ion.accelToward(sp.pos, w.pos, delta, D.gravity));
     }
+
+    public sprite : Player;
 }
 
-export let WorldGravity : ion.IBehaviorFactory
-    = (game, sprite) => new WorldGravityClass(game, sprite);
+export let WorldGravity : (p: Player) => ion.IBehaviorFactory
+    = (p) => (game, sprite) => new WorldGravityClass(game, p);
 
 class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     // FIXME: This ought to use body collisions, and be, or be based on,
     // a generalized implementation within ionsible.
     update(delta : ion.Duration) {
-        let sp = this.sprite as sprite.Player;
+        let sp = this.sprite;
         let w = sp.theWorld;
         if (!w) return;
         
@@ -101,13 +104,16 @@ class WorldCollideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
             }
         }
     }
+
+    public sprite : Player;
 }
 
-export let WorldCollide : ion.IBehaviorFactory
-    = (game, sprite) => new WorldCollideClass(game, sprite);
+export let WorldCollide : (p: Player) => ion.IBehaviorFactory
+    = (p) => (game, sprite) => new WorldCollideClass(game, p);
 
-export let playerJump = (s : any) => {
-    let sp = s as sprite.Player;
+export let playerJump = (sp : Player) => {
+    // FIXME: maybe instead fo HandleKeys and the like just passing a sprite to a function,
+    // they trigger an event
     let w = sp.theWorld;
     if (!w) return;
 
@@ -119,14 +125,10 @@ export let playerJump = (s : any) => {
     // Jump that direction
     dm.mag = D.jumpSpeed;
     sp.vel = sp.vel.combined(ion.veloc(dm));
-
-    // TODO: cap that velocity out, to prevent the occasional multi-triggered jump
 };
 
-let playerMover : (inDir : number) => ion.b.KeyHandlerCallback
-    = (inDir) => ((game, s, delta) => {
+let playerMover = (inDir: number) => ((game: ion.Game, sp: Player, delta: ion.Duration) => {
 
-    let sp = s as sprite.Player;
     let w = sp.theWorld;
     if (!w) return;
 
@@ -138,9 +140,9 @@ let playerMover : (inDir : number) => ion.b.KeyHandlerCallback
     sp.vel = sp.vel.advanced(ion.accel(dm), delta)
 });
 
-export let playerLeft : ion.b.KeyHandlerCallback = playerMover(-D.TAU/4);
+export let playerLeft : (g: ion.Game, sp: Player, delta: ion.Duration) => void = playerMover(-D.TAU/4);
 
-export let playerRight : ion.b.KeyHandlerCallback = playerMover(D.TAU/4);
+export let playerRight : (g: ion.Game, sp: Player, delta: ion.Duration) => void = playerMover(D.TAU/4);
 
 class PlayerLateralFrictionClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {

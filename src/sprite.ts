@@ -162,23 +162,28 @@ export class Player extends ion.Sprite implements ion.ISprite {
         this.pos = pos;
     }
 
+    private static readonly tknMoveCounterClockwise  = "move-counter-clockwise";
+    private static readonly tknMoveClockwise         = "move-clockwise";
+    private static readonly tknJump                  = "jump";
+
     behaviors : ion.IBehaviorFactory[] = [
-        sm.FindNearestWorld
-      , sm.WorldGravity
-      , sm.WorldCollide
+        sm.FindNearestWorld(this)
+      , sm.WorldGravity(this)
+      , sm.WorldCollide(this)
+
       , ion.b.HandleKeys([
           {
-              handler: sm.playerLeft,
-              keys: ['A', 'Left']
+              token: Player.tknMoveCounterClockwise
+            , keys: ['A', 'Left']
           }
         , {
-              handler: sm.playerRight,
-              keys: ['D', 'Right']
+              token: Player.tknMoveClockwise
+            , keys: ['D', 'Right']
           }
         ])
       , ion.b.OnKey({
-            keyDown: ["Space", 'Up', 'W']
-          , fire: sm.playerJump
+            token: Player.tknJump
+          , keyDown: ["Space", 'Up', 'W']
         })
       , sm.PlayerLateralFriction
       , ion.b.Momentum
@@ -191,6 +196,17 @@ export class Player extends ion.Sprite implements ion.ISprite {
     public static readonly offset = 28;
     touchingWorld(w : World, fudge : number = 0) : boolean {
         return this.pos.distFrom(w.pos) < w.r + Player.offset + fudge;
+    }
+
+    handleEvent(event : ion.Event) : void {
+        if (event instanceof ion.KeyHandlerEvent) {
+            if (event.token === Player.tknJump)
+                sm.playerJump(this);
+            else if (event.token === Player.tknMoveCounterClockwise)
+                sm.playerLeft(this.game, this, event.delta);
+            else if (event.token === Player.tknMoveClockwise)
+                sm.playerRight(this.game, this, event.delta);
+        }
     }
 }
 
