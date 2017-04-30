@@ -18,7 +18,7 @@ export class Background implements ion.IDrawable {
 
 export class World implements ion.IDrawable {
     draw(c : CanvasRenderingContext2D) {
-        let s = this.sprite as sp.World;
+        let s = this.sprite;
         let p = s.pos;
         c.beginPath();
         c.arc(0, 0, s.r, 0, D.TAU);
