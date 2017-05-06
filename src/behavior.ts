@@ -275,8 +275,8 @@ export let BaddyWorldGlide : (w: sprite.World, spd: number) => ion.IBehaviorFact
 
 class BaddySlideClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     public period = 2.5; // time in secs to complete a cycle.
-    public xSlide = 160;
-    public ySlide = 340;
+    public xSlide = -160;
+    public ySlide = -340;
     public period1 = 1/2;
     public xSlide1 = 40;
     public ySlide1 = -40;
