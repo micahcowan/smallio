@@ -34,6 +34,9 @@ export function setGameWon() {
     gameWon = true;
     setTimeout(gameReset, 6000)
 }
+
+export let vantagePoint : ion.Point = ion.point(-100, -450); // used in zooming camera
+
 export function gameReset() : void {
     console.log("game reset")
 
@@ -58,7 +61,7 @@ export function gameReset() : void {
     w.push(world);
     world = new sprite.World(game, ion.point(-200, -200), 7).setColor("#612");
     w.push(world);
-    world = new sprite.World(game, ion.point(-100, -450), 7).setColor("#261");
+    world = new sprite.World(game, vantagePoint, 7).setColor("#261");
     world.addJumper(1 / 8 * -D.TAU, 200)
     w.push(world);
 

@@ -3,7 +3,7 @@ import * as sprite from "./sprite";
 import { Player } from "./sprite";
 import * as D from "./defs";
 import { Camera, SmallioCamera, CameraBehaviorFac, ICameraBehaviorFactory } from "./camera";
-import { player, playSound, gameReset, gameWon } from "./smallio";
+import { player, playSound, gameReset, gameWon, vantagePoint } from "./smallio";
 
 class FindNearestWorldClass extends ion.b.BehaviorFac implements ion.IUpdatable {
     update(delta : ion.Duration) {
@@ -301,6 +301,7 @@ export let BaddySlide : ion.IBehaviorFactory<sprite.Baddy>
 
 /*** Camera Behavior */
 
+let vantageRamp = ion.util.makeScalingRamp(200, 60, 1, 0.65);
 class CameraFollowsPlayerClass extends CameraBehaviorFac {
     update(delta : ion.Duration) {
         let c = this.camera;
@@ -315,9 +316,19 @@ class CameraFollowsPlayerClass extends CameraBehaviorFac {
         //c.rotation = c.player.rotation;
         //c.rotation = D.TAU / 2;
 
-        let ramp = player.pDist / 1000;
-        if (ramp > 1) ramp = 1;
-        let targetScale = 1 - 4/5 * ramp;
+        // Scale is a function of two things: player's distance from the nearest world, and
+        // player's distance from a specific world that offers a good vantage point
+        // of the large world with baddies circling.
+
+        // distance from vantage point (zoom out on approach)
+        let vantageDist = ppos.distFrom(vantagePoint);
+        let planetScale = vantageRamp(vantageDist);
+
+        // distance from nearest world
+        let distRamp = player.pDist / 1000;
+        if (distRamp > 1) distRamp = 1;
+
+        let targetScale = planetScale - 4/5 * distRamp;
         c.scale = targetScale;
     }
 }
