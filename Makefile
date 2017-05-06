@@ -10,7 +10,13 @@ BOPT = -d -p [ tsify ] -o build/smallio-all.js src/smallio.ts
 WIFY = ./node_modules/.bin/watchify
 WOPT = --verbose $(BOPT)
 
-all: browserify build/index.html build/gfx build/sfx build/music
+all: browserify soundjs build/index.html build/gfx build/sfx build/music
+
+.PHONY: soundjs
+soundjs: build/soundjs-0.6.0.min.js
+build/soundjs-0.6.0.min.js: build
+	cd build && \
+	wget http://code.createjs.com/soundjs-0.6.0.min.js
 
 build: src/ionsible
 	mkdir -p build
@@ -47,7 +53,6 @@ distclean: clean
 
 browserify: build/smallio-all.js
 build/smallio-all.js: build src/smallio.ts $(SRC)
-	mkdir -p build
 	$(BIFY) $(BOPT)
 
 which:
