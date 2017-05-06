@@ -80,12 +80,11 @@ export function gameReset() : void {
 
     game.elapsed = new ion.Duration(0);
 
+    let camera = new SmallioCamera(game, game.canvas);
+    game.camera = camera;
+
     console.log("game reset finished")
 }
-
-let camera = new SmallioCamera(game, game.canvas);
-game.camera = camera;
-//game.camera.drawBB = true;
 
 gameReset();
 
