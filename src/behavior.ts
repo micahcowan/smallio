@@ -118,10 +118,12 @@ export let playerJump = (sp : Player) => {
     if (!w) return;
 
     // Only jump if we're on the world surface.
-    if (!sp.touchingWorld(w, 10)) return;
+    if (!sp.touchingWorld(w, 20)) return;
 
     // Find out which direction is from the world, toward player.
     let dm = sp.pos.diff(w.pos).asDirMag();
+    // Negate any current velocity in the direction toward or away from the world.
+    sp.vel = sp.vel.diff(ion.veloc({ dir: dm.dir, mag: sp.vel.magnitudeInDir(dm.dir) }));
     // Jump that direction
     dm.mag = D.jumpSpeed;
     sp.vel = sp.vel.combined(ion.veloc(dm));
