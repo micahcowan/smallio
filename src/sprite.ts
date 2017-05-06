@@ -81,7 +81,7 @@ export class Coin extends ion.Sprite implements ion.ISprite {
 export class World extends ion.Sprite implements ion.ISprite, ion.ISpriteContainer {
     public readonly r : number;            // Radius size of this world
     public color : string = "olive";
-    constructor(g : ion.Game, pos : ion.Point, public readonly szBlocks : number) {
+    constructor(g : ion.Game, pos : ion.Point, public readonly szBlocks : number, skipTopCoin : boolean = false) {
         super(g);
 
         this.pos = pos;
@@ -91,15 +91,17 @@ export class World extends ion.Sprite implements ion.ISprite, ion.ISpriteContain
 
         this.drawer = new art.World(this);
 
-        this.makeCoins(szBlocks);
+        this.makeCoins(szBlocks, skipTopCoin);
     }
 
     subsprites : ion.ISprite[] = []
 
-    private makeCoins(n : number) : void {
+    private makeCoins(n : number, skipTop : boolean) : void {
         let r = this.r + D.blockSize * 3/4;
         for (let i = 0; i < n; ++i) {
             let A = i * (D.TAU/n);
+            if (skipTop && Math.abs(A - 3 * D.TAU/4) < 0.001)
+                continue;
             let x = this.pos.x + r * Math.cos(A);
             let y = this.pos.y + r * Math.sin(A);
             this.subsprites.push(new Coin(this.game, this, ion.point(x, y), A - D.TAU/4))

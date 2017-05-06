@@ -49,7 +49,7 @@ export function gameReset() : void {
         subsprites: [] // TS glitch? Can't declare worlds here directly, so push them later.
     }
     let w = worlds.subsprites;
-    let world = new sprite.World(game, ion.point(0, 0), 20);
+    let world = new sprite.World(game, ion.point(0, 0), 20, true);
     world.addJumper(15 / 16 * -D.TAU, 300);
     world.addJumper(1 / 2 * -D.TAU, 200);
     w.push(world);
