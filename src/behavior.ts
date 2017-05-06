@@ -307,7 +307,7 @@ let vantageRamp = ion.util.makeScalingRamp(200, 60, 1, 0.65);
 class CameraFollowsPlayerClass extends CameraBehaviorFac {
     private lastPlanetScale : number = 1.0;
     private lastScaleDirection : number = 1;
-    private timeSinceDirChange : number = 0;
+    private timeSinceDirChange : number = 1000;
 
     update(delta : ion.Duration) {
         let c = this.camera;
@@ -334,11 +334,26 @@ class CameraFollowsPlayerClass extends CameraBehaviorFac {
         // To compensate for this, we'll slow the speed planetScale
         // can change in the positive direction.
         // - We'll also instigate a delay before we actually start zooming in again.
-        let time = 5.0 // seconds to go from most zoom to normal zoom
-        let speed = (1 - 0.65) / time;
-        if (planetScale > this.lastPlanetScale + speed * delta.s)
-            planetScale = this.lastPlanetScale + speed * delta.s;
+        let dir = planetScale - this.lastPlanetScale;
+        if (dir < 0) {
+            // Nothing, we're good.
+        }
+        else if (this.lastScaleDirection < 0) {
+            this.timeSinceDirChange = 0;
+            planetScale = this.lastPlanetScale;
+        }
+        else if (this.timeSinceDirChange < 1) {
+            this.timeSinceDirChange += delta.s;
+            planetScale = this.lastPlanetScale;
+        }
+        else {
+            let time = 1 // seconds to go from most zoom to normal zoom
+            let speed = (1 - 0.65) / time;
+            if (planetScale > this.lastPlanetScale + speed * delta.s)
+                planetScale = this.lastPlanetScale + speed * delta.s;
+        }
         this.lastPlanetScale = planetScale;
+        this.lastScaleDirection = dir;
 
         // distance from nearest world
         let distRamp = player.pDist / 1000;
