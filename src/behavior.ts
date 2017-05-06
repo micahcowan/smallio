@@ -305,6 +305,10 @@ export let BaddySlide : ion.IBehaviorFactory<sprite.Baddy>
 
 let vantageRamp = ion.util.makeScalingRamp(200, 60, 1, 0.65);
 class CameraFollowsPlayerClass extends CameraBehaviorFac {
+    private lastPlanetScale : number = 1.0;
+    private lastScaleDirection : number = 1;
+    private timeSinceDirChange : number = 0;
+
     update(delta : ion.Duration) {
         let c = this.camera;
         let ppos = player.pos;
@@ -325,6 +329,16 @@ class CameraFollowsPlayerClass extends CameraBehaviorFac {
         // distance from vantage point (zoom out on approach)
         let vantageDist = ppos.distFrom(vantagePoint);
         let planetScale = vantageRamp(vantageDist);
+        // the problem with basing zoom on distance from a point, is that the zoom
+        // shifts rapidly when the player is jumping around near it.
+        // To compensate for this, we'll slow the speed planetScale
+        // can change in the positive direction.
+        // - We'll also instigate a delay before we actually start zooming in again.
+        let time = 5.0 // seconds to go from most zoom to normal zoom
+        let speed = (1 - 0.65) / time;
+        if (planetScale > this.lastPlanetScale + speed * delta.s)
+            planetScale = this.lastPlanetScale + speed * delta.s;
+        this.lastPlanetScale = planetScale;
 
         // distance from nearest world
         let distRamp = player.pDist / 1000;
