@@ -1,3 +1,5 @@
+import * as ion from "./ionsible/ionsible";
+
 export let blockSize : number = 40;
 
 // TAU represents a full turn/circle, in radians. Or twice PI (which only goes half a circle)
@@ -33,14 +35,11 @@ let jump_time = 0.6;    // secs
    G = 4 * ymax/jtm * 2/jtm
    G = 8 * ymax/(jtm^2)
 */
-export let gravity = 8 * jump_height / (jump_time * jump_time);
-/**
- * Calculate speed from desired jump distance.
- */
-export function getSpeedFromDist(dist : number) {
-    return 4 * dist / jump_time;
+export let gravity : number = ion.util.getJumpGravity(jump_height, jump_time).y;
+export function getSmallioJumpSpeed(height : number) {
+    return -ion.util.getJumpSpeed(height, jump_time).y;
 }
-export let jumpSpeed = getSpeedFromDist(jump_height);
+export let jumpSpeed : number = getSmallioJumpSpeed(jump_height);
 
 
 // Now to calculate lateral friction and movement force, given

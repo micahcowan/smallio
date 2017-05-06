@@ -18,7 +18,7 @@ export class Jumper {
     public readonly vel : ion.Velocity;
     constructor(public world : World, public readonly dir : number, public readonly height : number) {
         // Calculate magnitude of velocity from height
-        this.vel = ion.veloc({dir: dir, mag: D.getSpeedFromDist(height)});
+        this.vel = ion.veloc({dir: dir, mag: D.getSmallioJumpSpeed(height)});
     }
 
     matchesDir(dir : number) : boolean {
