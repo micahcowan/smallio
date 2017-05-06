@@ -78,6 +78,8 @@ export function gameReset() : void {
         , new sprite.GameWon(game)
     ]);
 
+    game.elapsed = new ion.Duration(0);
+
     console.log("game reset finished")
 }
 
